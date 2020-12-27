@@ -5,10 +5,10 @@ import Grid from "@material-ui/core/Grid";
 import { useDispatch, useSelector } from "react-redux";
 
 import CardComponent from "./CardComponent";
-import { Card } from "../interfaces";
+import { Card, Monitor } from "../interfaces";
 import { add, update } from "../slices/yoursSlice";
 
-const useStyles = makeStyles((theme: Theme) =>
+const useStyles = makeStyles<Theme, Monitor>((theme: Theme) =>
   createStyles({
     root: {
       height: "70vh",
@@ -16,15 +16,27 @@ const useStyles = makeStyles((theme: Theme) =>
       borderStyle: "solid",
       borderColor: "white",
     },
+    dropPreview: ({ isOver, clientOffset, card }) => ({
+      backgroundImage: card
+        ? `url(${process.env.PUBLIC_URL}/cards/${card.cardId}.png)`
+        : undefined,
+      opacity: 0.5,
+      backgroundSize: "cover",
+      width: "100px",
+      height: "140px",
+      position: "absolute",
+      visibility: isOver ? "visible" : "hidden",
+      top: clientOffset ? clientOffset.y : undefined,
+      left: clientOffset ? clientOffset.x : undefined,
+    }),
   })
 );
 
 export default function PlayZone() {
-  const classes = useStyles();
   const play: Card[] = useSelector((state: any) => state.yours.play);
   const dispatch = useDispatch();
 
-  const [{ canDrop, isOver }, drop] = useDrop({
+  const [monitor, drop] = useDrop({
     accept: ["play", "hand"],
     drop: (item: Card & { type: string }, monitor) => {
       const { type, x: xRemoved, y: yRemoved, ...typeRemoved } = item;
@@ -40,16 +52,21 @@ export default function PlayZone() {
     collect: (monitor) => ({
       isOver: monitor.isOver(),
       canDrop: monitor.canDrop(),
+      clientOffset: monitor.getClientOffset(),
+      card: monitor.getItem(),
     }),
   });
 
+  const classes = useStyles(monitor);
+
   return (
-    <Grid container ref={drop} className={classes.root}>
+    <div ref={drop} className={classes.root}>
+      <div className={classes.dropPreview} />
       {play.map((card, i) => (
         <Grid item key={"hand" + i}>
           <CardComponent source="play" card={card} />
         </Grid>
       ))}
-    </Grid>
+    </div>
   );
 }

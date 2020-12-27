@@ -1,3 +1,5 @@
+import { XYCoord } from "react-dnd";
+
 export interface Card {
   id: number;
   cardId: string;
@@ -14,3 +16,10 @@ export type ICardComponent = {
   dropCb?: (element: any) => void;
   [x: string]: any;
 };
+
+export interface Monitor {
+  canDrop?: boolean;
+  isOver?: boolean;
+  clientOffset?: XYCoord | null;
+  card?: Card;
+}

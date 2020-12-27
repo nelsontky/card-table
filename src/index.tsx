@@ -2,17 +2,22 @@ import React from "react";
 import ReactDOM from "react-dom";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
-import { createMuiTheme, ThemeProvider } from "@material-ui/core/styles";
+import {
+  createMuiTheme,
+  ThemeProvider,
+  responsiveFontSizes,
+} from "@material-ui/core/styles";
 import { TouchBackend } from "react-dnd-touch-backend";
 import { DndProvider } from "react-dnd";
 import store from "./store";
 import { Provider } from "react-redux";
 
-const theme = createMuiTheme({
+let theme = createMuiTheme({
   palette: {
     type: "dark",
   },
 });
+theme = responsiveFontSizes(theme);
 
 ReactDOM.render(
   <React.StrictMode>

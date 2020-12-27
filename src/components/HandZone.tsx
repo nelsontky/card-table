@@ -1,26 +1,28 @@
 import React from "react";
 import { Theme, createStyles, makeStyles } from "@material-ui/core/styles";
-import { useDrop, useDrag } from "react-dnd";
+import { useDrop } from "react-dnd";
 import Grid from "@material-ui/core/Grid";
 import { useDispatch, useSelector } from "react-redux";
 
 import CardComponent from "./CardComponent";
-import { Card } from "../interfaces";
+import { Card, Monitor } from "../interfaces";
 import { add, remove } from "../slices/yoursSlice";
 
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    root: {
-      height: "100%",
-      width: "100%",
-      borderStyle: "solid",
-      borderColor: "white",
-    },
-  })
+const useStyles = makeStyles<Theme, Monitor>(
+  (theme: Theme) =>
+    createStyles({
+      root: ({ canDrop, isOver }) => ({
+        height: "100%",
+        width: "100%",
+        borderStyle: "solid",
+        borderColor: "white",
+        backgroundColor:
+          canDrop && isOver ? "#00FF00" : canDrop ? "#FF0000" : undefined,
+      }),
+    })
 );
 
 export default function HandZone() {
-  const classes = useStyles();
   const hand: Card[] = useSelector((state: any) => state.yours.hand);
   const dispatch = useDispatch();
 
@@ -35,6 +37,8 @@ export default function HandZone() {
       canDrop: monitor.canDrop(),
     }),
   });
+
+  const classes = useStyles({ canDrop, isOver });
 
   return (
     <Grid container ref={drop} className={classes.root}>
