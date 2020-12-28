@@ -86,7 +86,7 @@ export const rotate = (playerId: number, card: Card, angle: number) => (
     if (found) {
       let newAngle = (found.angle + angle) % 360;
       newAngle = newAngle < 0 ? 360 + newAngle : newAngle;
-      
+
       dispatch(
         update({
           playerId,

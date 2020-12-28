@@ -2,6 +2,7 @@ import React from "react";
 import { Theme, createStyles, makeStyles } from "@material-ui/core/styles";
 import { useDrop } from "react-dnd";
 import Grid from "@material-ui/core/Grid";
+import Typography from "@material-ui/core/Typography";
 import { useDispatch, useSelector } from "react-redux";
 
 import CardComponent from "./CardComponent";
@@ -45,18 +46,21 @@ export default function HandZone({ playerId }: { playerId: number }) {
   const classes = useStyles({ canDrop, isOver });
 
   return (
-    <Grid container ref={drop} className={classes.root} wrap="nowrap">
-      {hand.map((card, i) => (
-        <Grid item key={"hand" + i}>
-          <CardComponent
-            dropCb={() => {
-              dispatch(remove({ playerId, section: "hand", card }));
-            }}
-            source="hand"
-            card={card}
-          />
-        </Grid>
-      ))}
-    </Grid>
+    <>
+      <Typography variant="caption">Hand</Typography>
+      <Grid container wrap="nowrap" ref={drop} className={classes.root}>
+        {hand.map((card, i) => (
+          <Grid item key={"hand" + i}>
+            <CardComponent
+              dropCb={() => {
+                dispatch(remove({ playerId, section: "hand", card }));
+              }}
+              source="hand"
+              card={card}
+            />
+          </Grid>
+        ))}
+      </Grid>
+    </>
   );
 }

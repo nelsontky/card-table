@@ -22,13 +22,13 @@ export default function PlayZone() {
   const dispatch = useDispatch();
 
   const [monitor, drop] = useDrop({
-    accept: ["play", "hand"],
+    accept: ["play", "hand", "deck"],
     drop: (item: Card & { type: string }, monitor) => {
       const { type, x: xRemoved, y: yRemoved, ...typeRemoved } = item;
       const itemType = monitor.getItemType();
       const { x, y } = monitor.getClientOffset() as XYCoord;
 
-      if (itemType === "hand") {
+      if (itemType === "hand" || itemType === "deck") {
         dispatch(
           add({ playerId: 0, section: "play", card: { ...typeRemoved, x, y } })
         );

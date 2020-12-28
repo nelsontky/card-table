@@ -58,8 +58,7 @@ const useStyles = makeStyles<
 );
 
 export default function CardComponent({ card, ...rest }: ICardComponent) {
-  const { id, cardId, x, y, isFaceDown } = card;
-  const { source, dropCb, noDrag } = rest;
+  const { source, dropCb, noDrag, disableActions } = rest;
   const { width, height } = useCardDimensions();
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
   const [isView, setIsView] = React.useState(false);
@@ -110,12 +109,14 @@ export default function CardComponent({ card, ...rest }: ICardComponent) {
         ref={noDrag ? undefined : drag}
         className={clsx(classes.root, rest.className)}
       >
-        <CardMenu
-          className={classes.menu}
-          card={card}
-          isOpen={isMenuOpen}
-          setIsOpen={setIsMenuOpen}
-        />
+        {!disableActions && (
+          <CardMenu
+            className={classes.menu}
+            card={card}
+            isOpen={isMenuOpen}
+            setIsOpen={setIsMenuOpen}
+          />
+        )}
       </Paper>
     </>
   );
