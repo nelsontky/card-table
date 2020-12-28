@@ -4,7 +4,8 @@ import { Theme, createStyles, makeStyles } from "@material-ui/core/styles";
 import clsx from "clsx";
 import { useDrag } from "react-dnd";
 
-import { ICardComponent } from "../interfaces";
+import { ICardComponent, DragItem } from "../interfaces";
+import { CARD_HEIGHT, CARD_WIDTH } from "../lib/constants";
 
 const useStyles = makeStyles<Theme, ICardComponent>((theme: Theme) =>
   createStyles({
@@ -13,8 +14,8 @@ const useStyles = makeStyles<Theme, ICardComponent>((theme: Theme) =>
         ? undefined
         : `url(${process.env.PUBLIC_URL}/cards/${card.cardId}.png)`,
       backgroundSize: "cover",
-      width: "100px",
-      height: "140px",
+      width: CARD_WIDTH,
+      height: CARD_HEIGHT,
       cursor: "move",
       position: card.x && card.y ? "absolute" : undefined,
       top: card.y,
@@ -24,8 +25,8 @@ const useStyles = makeStyles<Theme, ICardComponent>((theme: Theme) =>
 );
 
 export default function CardComponent({ card, ...rest }: ICardComponent) {
-  const { id, cardId, x, y } = card;
-  const { source, faceDown, dropCb } = rest;
+  const { id, cardId, x, y, isFaceDown } = card;
+  const { source, dropCb } = rest;
 
   const classes = useStyles({ card, ...rest });
   const [{ isDragging }, drag] = useDrag({

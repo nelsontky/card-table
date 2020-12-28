@@ -6,13 +6,13 @@ import { useDispatch, useSelector } from "react-redux";
 
 import CardComponent from "./CardComponent";
 import { Card, Monitor } from "../interfaces";
-import { add, update } from "../slices/yoursSlice";
+import { add, update } from "../slices/gameSlice";
+import { CARD_HEIGHT, CARD_WIDTH } from "../lib/constants";
 
 const useStyles = makeStyles<Theme, Monitor>((theme: Theme) =>
   createStyles({
     root: {
-      height: "70vh",
-      width: "100%",
+      height: "100%",
       borderStyle: "solid",
       borderColor: "white",
     },
@@ -22,8 +22,8 @@ const useStyles = makeStyles<Theme, Monitor>((theme: Theme) =>
         : undefined,
       opacity: 0.5,
       backgroundSize: "cover",
-      width: "100px",
-      height: "140px",
+      width: CARD_WIDTH,
+      height: CARD_HEIGHT,
       position: "absolute",
       visibility: isOver ? "visible" : "hidden",
       top: clientOffset ? clientOffset.y : undefined,
@@ -33,7 +33,7 @@ const useStyles = makeStyles<Theme, Monitor>((theme: Theme) =>
 );
 
 export default function PlayZone() {
-  const play: Card[] = useSelector((state: any) => state.yours.play);
+  const play: Card[] = useSelector((state: any) => state.game[0].play);
   const dispatch = useDispatch();
 
   const [monitor, drop] = useDrop({
@@ -44,9 +44,17 @@ export default function PlayZone() {
       const { x, y } = monitor.getClientOffset() as XYCoord;
 
       if (itemType === "hand") {
-        dispatch(add({ section: "play", card: { ...typeRemoved, x, y } }));
+        dispatch(
+          add({ playerId: 0, section: "play", card: { ...typeRemoved, x, y } })
+        );
       } else {
-        dispatch(update({ section: "play", card: { ...typeRemoved, x, y } }));
+        dispatch(
+          update({
+            playerId: 0,
+            section: "play",
+            card: { ...typeRemoved, x, y },
+          })
+        );
       }
     },
     collect: (monitor) => ({

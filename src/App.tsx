@@ -9,15 +9,22 @@ import Deck from "./components/Deck";
 import HandZone from "./components/HandZone";
 import CardComponent from "./components/CardComponent";
 import PlayZone from "./components/PlayZone";
-import { set, remove } from "./slices/yoursSlice";
+import { set, remove } from "./slices/gameSlice";
 
 import dragonicForce from "./decks/dragonicForce.json";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
+    root: {
+      height: "95vh",
+      width: "100%",
+      padding: theme.spacing(1),
+    },
+    playZone: {
+      flexGrow: 1,
+      margin: theme.spacing(2, 0, 2, 0),
+    },
     bottom: {
-      position: "absolute",
-      bottom: theme.spacing(3),
       width: "100%",
     },
   })
@@ -25,18 +32,23 @@ const useStyles = makeStyles((theme: Theme) =>
 
 function App() {
   const classes = useStyles();
-  const deck: Card[] = useSelector((state: any) => state.yours.deck);
+  const deck: Card[] = useSelector((state: any) => state.game[0].deck);
   const dispatch = useDispatch();
 
   React.useEffect(() => {
     let id = 0;
     dispatch(
       set({
+        playerId: 0,
         section: "deck",
         cards: dragonicForce.reduce((acc, curr) => {
           const next = [...acc];
           for (let i = 0; i < curr.quantity; i++) {
-            next.push({ cardId: curr.id, id: id++ });
+            next.push({
+              cardId: curr.id,
+              id: id++,
+              isFaceDown: true,
+            });
           }
           return next;
         }, Array<Card>()),
@@ -47,21 +59,22 @@ function App() {
   return (
     <>
       <CssBaseline />
-      <Grid container>
-        <Grid item xs={12}>
+      <Grid container className={classes.root} direction="column">
+        <Grid className={classes.playZone} item>
           <PlayZone />
         </Grid>
         <Grid className={classes.bottom} container item spacing={2} wrap="wrap">
-          <Grid xs={8} item>
-            <HandZone />
+          <Grid xs={10} item>
+            <HandZone playerId={0} />
           </Grid>
           <Grid item xs={2}>
             {deck.length > 0 && (
               <CardComponent
                 dropCb={() => {
-                  dispatch(remove({ section: "deck", id: deck[0].id }));
+                  dispatch(
+                    remove({ playerId: 0, section: "deck", card: deck[0] })
+                  );
                 }}
-                faceDown
                 source={"deck"}
                 card={deck[0]}
               />
