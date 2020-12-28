@@ -48,6 +48,7 @@ function App() {
               cardId: curr.id,
               id: id++,
               isFaceDown: true,
+              angle: 0,
             });
           }
           return next;

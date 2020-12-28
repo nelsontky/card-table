@@ -1,13 +1,11 @@
 import React from "react";
 import { Theme, createStyles, makeStyles } from "@material-ui/core/styles";
 import { useDrop, XYCoord } from "react-dnd";
-import Grid from "@material-ui/core/Grid";
 import { useDispatch, useSelector } from "react-redux";
 
 import CardComponent from "./CardComponent";
 import { Card, Monitor } from "../interfaces";
-import { add, update } from "../slices/gameSlice";
-import { CARD_HEIGHT, CARD_WIDTH } from "../lib/constants";
+import { add, update, remove } from "../slices/gameSlice";
 
 const useStyles = makeStyles<Theme, Monitor>((theme: Theme) =>
   createStyles({
@@ -16,19 +14,6 @@ const useStyles = makeStyles<Theme, Monitor>((theme: Theme) =>
       borderStyle: "solid",
       borderColor: "white",
     },
-    dropPreview: ({ isOver, clientOffset, card }) => ({
-      backgroundImage: card
-        ? `url(${process.env.PUBLIC_URL}/cards/${card.cardId}.png)`
-        : undefined,
-      opacity: 0.5,
-      backgroundSize: "cover",
-      width: CARD_WIDTH,
-      height: CARD_HEIGHT,
-      position: "absolute",
-      visibility: isOver ? "visible" : "hidden",
-      top: clientOffset ? clientOffset.y : undefined,
-      left: clientOffset ? clientOffset.x : undefined,
-    }),
   })
 );
 
@@ -56,6 +41,8 @@ export default function PlayZone() {
           })
         );
       }
+
+      return { type: "play" };
     },
     collect: (monitor) => ({
       isOver: monitor.isOver(),
@@ -64,16 +51,21 @@ export default function PlayZone() {
       card: monitor.getItem(),
     }),
   });
-
   const classes = useStyles(monitor);
 
   return (
     <div ref={drop} className={classes.root}>
-      <div className={classes.dropPreview} />
       {play.map((card, i) => (
-        <Grid item key={"hand" + i}>
-          <CardComponent source="play" card={card} />
-        </Grid>
+        <CardComponent
+          key={"play" + i}
+          dropCb={(item, monitor) => {
+            if (monitor.getDropResult().type !== "play") {
+              dispatch(remove({ playerId: 0, section: "play", card: item }));
+            }
+          }}
+          source="play"
+          card={card}
+        />
       ))}
     </div>
   );

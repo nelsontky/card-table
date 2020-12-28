@@ -12,10 +12,9 @@ const useStyles = makeStyles<Theme, Monitor>((theme: Theme) =>
   createStyles({
     root: ({ canDrop, isOver }) => ({
       height: "100%",
-      borderStyle: "solid",
-      borderColor: "white",
-      backgroundColor:
-        canDrop && isOver ? "#00FF00" : canDrop ? "#FF0000" : undefined,
+      borderStyle: canDrop ? "dashed" : "solid",
+      borderColor: isOver ? "green" : "white",
+      overflowX: "scroll",
     }),
   })
 );
@@ -25,10 +24,17 @@ export default function HandZone({ playerId }: { playerId: number }) {
   const dispatch = useDispatch();
 
   const [{ canDrop, isOver }, drop] = useDrop({
-    accept: "deck",
+    accept: ["deck", "play"],
     drop: (item: Card & { type: string }) => {
       const { type, x, y, ...typeRemoved } = item;
-      dispatch(add({ playerId, section: "hand", card: typeRemoved }));
+      dispatch(
+        add({
+          playerId,
+          section: "hand",
+          card: { ...typeRemoved, isFaceDown: false },
+        })
+      );
+      return { type: "hand" };
     },
     collect: (monitor) => ({
       isOver: monitor.isOver(),
@@ -39,7 +45,7 @@ export default function HandZone({ playerId }: { playerId: number }) {
   const classes = useStyles({ canDrop, isOver });
 
   return (
-    <Grid container ref={drop} className={classes.root}>
+    <Grid container ref={drop} className={classes.root} wrap="nowrap">
       {hand.map((card, i) => (
         <Grid item key={"hand" + i}>
           <CardComponent

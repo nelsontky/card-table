@@ -1,9 +1,8 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-import { Card } from "../interfaces";
+import { Card, Section } from "../interfaces";
 import { SetGamePayload, CrudGamePayload } from "./interfaces";
 import { removeFromArray } from "../lib/utils";
-import { LeakAddTwoTone } from "@material-ui/icons";
 
 const initialState = [
   {
@@ -45,5 +44,60 @@ export const slice = createSlice({
 });
 
 export const { add, remove, update, set } = slice.actions;
+
+export const flip = (playerId: number, card: Card) => (
+  dispatch: any,
+  getState: any
+) => {
+  const allCards = getState().game[playerId];
+  const sections = Object.keys(allCards) as Section[];
+
+  for (let section of sections) {
+    const found = allCards[section].find(
+      (currCard: Card) => currCard.id === card.id
+    );
+
+    if (found) {
+      dispatch(
+        update({
+          playerId,
+          section,
+          card: { ...found, isFaceDown: !found.isFaceDown },
+        })
+      );
+
+      return;
+    }
+  }
+};
+
+export const rotate = (playerId: number, card: Card, angle: number) => (
+  dispatch: any,
+  getState: any
+) => {
+  const allCards = getState().game[playerId];
+  const sections = Object.keys(allCards) as Section[];
+
+  for (let section of sections) {
+    const found = allCards[section].find(
+      (currCard: Card) => currCard.id === card.id
+    );
+
+    if (found) {
+      let newAngle = (found.angle + angle) % 360;
+      newAngle = newAngle < 0 ? 360 + newAngle : newAngle;
+      
+      dispatch(
+        update({
+          playerId,
+          section,
+          card: { ...found, angle: newAngle },
+        })
+      );
+
+      return;
+    }
+  }
+};
 
 export default slice.reducer;

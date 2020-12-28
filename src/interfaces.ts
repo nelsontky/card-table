@@ -1,9 +1,10 @@
-import { XYCoord } from "react-dnd";
+import { XYCoord, DragSourceMonitor } from "react-dnd";
 
 export interface Card {
   id: number;
   cardId: string;
   isFaceDown: boolean;
+  angle: number;
   x?: number;
   y?: number;
 }
@@ -14,12 +15,20 @@ export type DragItem = Card & {
   type: Section;
 };
 
-export type ICardComponent = {
+export interface ICardComponent {
   card: Card;
   source: Section;
-  dropCb?: (element: DragItem) => void;
+  dropCb?: (element: DragItem, monitor: DragSourceMonitor) => void;
+  noDrag?: boolean;
   [x: string]: any;
-};
+}
+
+export interface ICardMenu {
+  card: Card;
+  isOpen: boolean;
+  setIsOpen: (isOpen: boolean) => void;
+  [x: string]: any;
+}
 
 export interface Monitor {
   canDrop?: boolean;
