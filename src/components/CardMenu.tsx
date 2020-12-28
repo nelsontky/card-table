@@ -9,7 +9,7 @@ import { useDispatch } from "react-redux";
 import { ICardMenu } from "../interfaces";
 import { flip, rotate } from "../slices/gameSlice";
 
-const options = ["View", "Flip", "Rotate right", "Rotate 180°", "Rotate left"];
+const options = ["Flip", "Rotate right", "Rotate 180°", "Rotate left"];
 
 const ITEM_HEIGHT = 40;
 
@@ -36,6 +36,7 @@ export default function CardMenu({
   const dispatch = useDispatch();
 
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
+    event.stopPropagation();
     setAnchorEl(event.currentTarget);
     setIsOpen(!isOpen);
   };
@@ -44,7 +45,8 @@ export default function CardMenu({
     setIsOpen(false);
   };
 
-  const onSelect = (option: string) => {
+  const onSelect = (event: React.MouseEvent<HTMLElement>, option: string) => {
+    event.stopPropagation();
     switch (option) {
       case "Flip":
         dispatch(flip(0, card));
@@ -83,8 +85,8 @@ export default function CardMenu({
         {options.map((option) => (
           <MenuItem
             key={option}
-            onClick={() => {
-              onSelect(option);
+            onClick={(event: React.MouseEvent<HTMLElement>) => {
+              onSelect(event, option);
             }}
           >
             {option}

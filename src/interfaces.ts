@@ -1,3 +1,4 @@
+import React from "react";
 import { XYCoord, DragSourceMonitor } from "react-dnd";
 
 export interface Card {
@@ -41,4 +42,11 @@ export interface PlayerState {
   deck: Card[];
   hand: Card[];
   play: Card[];
+}
+
+export interface IClosableBackdrop {
+  isOpen: boolean;
+  close: () => void;
+  children: React.ReactChild | React.ReactChildren;
+  [x: string]: any;
 }

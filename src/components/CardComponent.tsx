@@ -7,6 +7,7 @@ import { useDrag, XYCoord } from "react-dnd";
 import CardMenu from "./CardMenu";
 import { ICardComponent, DragItem } from "../interfaces";
 import { useCardDimensions } from "../lib/hooks";
+import ClosableBackdrop from "./ClosableBackdrop";
 
 const useStyles = makeStyles<
   Theme,
@@ -50,6 +51,9 @@ const useStyles = makeStyles<
       top: 0,
       right: 0,
     },
+    view: ({ card }) => ({
+      transform: `rotate(${card.angle}deg)`,
+    }),
   })
 );
 
@@ -58,6 +62,7 @@ export default function CardComponent({ card, ...rest }: ICardComponent) {
   const { source, dropCb, noDrag } = rest;
   const { width, height } = useCardDimensions();
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
+  const [isView, setIsView] = React.useState(false);
 
   const [{ isDragging, clientOffset }, drag] = useDrag({
     item: { ...card, type: source },
@@ -83,8 +88,25 @@ export default function CardComponent({ card, ...rest }: ICardComponent) {
 
   return (
     <>
+      <ClosableBackdrop
+        isOpen={isView}
+        close={() => {
+          setIsView(false);
+        }}
+      >
+        <img
+          className={classes.view}
+          src={`${process.env.PUBLIC_URL}/cards/${card.cardId}.png`}
+          alt={card.cardId}
+        />
+      </ClosableBackdrop>
       <Paper className={classes.dropPreview} />
       <Paper
+        onClick={() => {
+          if (!card.isFaceDown) {
+            setIsView(true);
+          }
+        }}
         ref={noDrag ? undefined : drag}
         className={clsx(classes.root, rest.className)}
       >

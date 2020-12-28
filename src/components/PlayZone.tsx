@@ -9,11 +9,11 @@ import { add, update, remove } from "../slices/gameSlice";
 
 const useStyles = makeStyles<Theme, Monitor>((theme: Theme) =>
   createStyles({
-    root: {
+    root: ({ canDrop, isOver }) => ({
       height: "100%",
-      borderStyle: "solid",
-      borderColor: "white",
-    },
+      borderStyle: canDrop ? "dashed" : "solid",
+      borderColor: isOver ? "green" : "white",
+    }),
   })
 );
 
