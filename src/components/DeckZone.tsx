@@ -46,18 +46,20 @@ export default function DeckZone() {
       set({
         playerId: 0,
         section: "deck",
-        cards: dragonicForce.reduce((acc, curr) => {
-          const next = [...acc];
-          for (let i = 0; i < curr.quantity; i++) {
-            next.push({
-              cardId: curr.id,
-              id: id++,
-              isFaceDown: true,
-              angle: 0,
-            });
-          }
-          return next;
-        }, Array<Card>()),
+        cards: shuffle(
+          dragonicForce.reduce((acc, curr) => {
+            const next = [...acc];
+            for (let i = 0; i < curr.quantity; i++) {
+              next.push({
+                cardId: curr.id,
+                id: id++,
+                isFaceDown: true,
+                angle: 0,
+              });
+            }
+            return next;
+          }, Array<Card>())
+        ),
       })
     );
   }, [dispatch]);

@@ -4,15 +4,16 @@ import { useDrop } from "react-dnd";
 import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
 import { useDispatch, useSelector } from "react-redux";
+import clsx from "clsx";
 
 import CardComponent from "./CardComponent";
-import { Card, Monitor } from "../interfaces";
+import { Card, Monitor, IHandZone } from "../interfaces";
 import { add, remove } from "../slices/gameSlice";
 
 const useStyles = makeStyles<Theme, Monitor>((theme: Theme) =>
   createStyles({
     root: ({ canDrop, isOver }) => ({
-      height: "100%",
+      width: "100%",
       borderStyle: canDrop ? "dashed" : "solid",
       borderColor: isOver ? "green" : "white",
       overflowX: "scroll",
@@ -20,7 +21,7 @@ const useStyles = makeStyles<Theme, Monitor>((theme: Theme) =>
   })
 );
 
-export default function HandZone({ playerId }: { playerId: number }) {
+export default function HandZone({ playerId, size, ...rest }: IHandZone) {
   const hand: Card[] = useSelector((state: any) => state.game[playerId].hand);
   const dispatch = useDispatch();
 
@@ -48,10 +49,17 @@ export default function HandZone({ playerId }: { playerId: number }) {
   return (
     <>
       <Typography variant="caption">Hand</Typography>
-      <Grid container wrap="nowrap" ref={drop} className={classes.root}>
+      <Grid
+        container
+        wrap="nowrap"
+        ref={drop}
+        className={clsx(classes.root, rest.className)}
+      >
         {hand.map((card, i) => (
           <Grid item key={"hand" + i}>
             <CardComponent
+              size={size}
+              disableActions={playerId !== 0}
               dropCb={() => {
                 dispatch(remove({ playerId, section: "hand", card }));
               }}

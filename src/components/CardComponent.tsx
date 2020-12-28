@@ -12,8 +12,8 @@ import ClosableBackdrop from "./ClosableBackdrop";
 const useStyles = makeStyles<
   Theme,
   ICardComponent & {
-    width: string;
-    height: string;
+    width: number;
+    height: number;
     isDragging: boolean;
     clientOffset: XYCoord;
   }
@@ -58,8 +58,8 @@ const useStyles = makeStyles<
 );
 
 export default function CardComponent({ card, ...rest }: ICardComponent) {
-  const { source, dropCb, noDrag, disableActions } = rest;
-  const { width, height } = useCardDimensions();
+  const { source, dropCb, noDrag, disableActions, size } = rest;
+  const { width, height } = useCardDimensions(size);
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
   const [isView, setIsView] = React.useState(false);
 

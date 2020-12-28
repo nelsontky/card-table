@@ -2,6 +2,8 @@ import React from "react";
 import { Theme, createStyles, makeStyles } from "@material-ui/core/styles";
 import { useDrop, XYCoord } from "react-dnd";
 import { useDispatch, useSelector } from "react-redux";
+import clsx from "clsx";
+import Typography from "@material-ui/core/Typography";
 
 import CardComponent from "./CardComponent";
 import { Card, Monitor } from "../interfaces";
@@ -17,7 +19,7 @@ const useStyles = makeStyles<Theme, Monitor>((theme: Theme) =>
   })
 );
 
-export default function PlayZone() {
+export default function PlayZone({ ...rest }: { [x: string]: any }) {
   const play: Card[] = useSelector((state: any) => state.game[0].play);
   const dispatch = useDispatch();
 
@@ -54,19 +56,22 @@ export default function PlayZone() {
   const classes = useStyles(monitor);
 
   return (
-    <div ref={drop} className={classes.root}>
-      {play.map((card, i) => (
-        <CardComponent
-          key={"play" + i}
-          dropCb={(item, monitor) => {
-            if (monitor.getDropResult().type !== "play") {
-              dispatch(remove({ playerId: 0, section: "play", card: item }));
-            }
-          }}
-          source="play"
-          card={card}
-        />
-      ))}
-    </div>
+    <>
+      <Typography variant="caption">Play area</Typography>
+      <div ref={drop} className={clsx(classes.root, rest.className)}>
+        {play.map((card, i) => (
+          <CardComponent
+            key={"play" + i}
+            dropCb={(item, monitor) => {
+              if (monitor.getDropResult().type !== "play") {
+                dispatch(remove({ playerId: 0, section: "play", card: item }));
+              }
+            }}
+            source="play"
+            card={card}
+          />
+        ))}
+      </div>
+    </>
   );
 }

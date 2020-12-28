@@ -16,15 +16,6 @@ export type DragItem = Card & {
   type: Section;
 };
 
-export interface ICardComponent {
-  card: Card;
-  source: Section;
-  dropCb?: (element: DragItem, monitor: DragSourceMonitor) => void;
-  noDrag?: boolean;
-  disableActions?: boolean;
-  [x: string]: any;
-}
-
 export interface ICardMenu {
   card: Card;
   isOpen: boolean;
@@ -49,5 +40,23 @@ export interface IClosableBackdrop {
   isOpen: boolean;
   close: () => void;
   children: React.ReactChild | React.ReactChildren;
+  [x: string]: any;
+}
+
+export type Size = "small" | "medium" | "large";
+
+export interface ICardComponent {
+  card: Card;
+  source: Section;
+  dropCb?: (element: DragItem, monitor: DragSourceMonitor) => void;
+  noDrag?: boolean;
+  disableActions?: boolean;
+  size?: Size;
+  [x: string]: any;
+}
+
+export interface IHandZone {
+  playerId: number;
+  size?: Size;
   [x: string]: any;
 }
