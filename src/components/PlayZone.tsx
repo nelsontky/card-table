@@ -36,6 +36,24 @@ export default function PlayZone({
   });
   const dispatch = useDispatch();
 
+  const [dimensions, setDimensions] = React.useState({
+    height: -1,
+    width: -1,
+    offsetTop: -1,
+    offsetLeft: -1,
+  });
+  React.useEffect(() => {
+    const playZone = document.getElementById("play-zone");
+    if (playZone) {
+      setDimensions({
+        height: playZone.clientHeight,
+        width: playZone.clientWidth,
+        offsetTop: playZone.offsetTop,
+        offsetLeft: playZone.offsetLeft,
+      });
+    }
+  }, []);
+
   const [monitor, drop] = useDrop({
     accept: ["play", "hand", "deck"],
     drop: (item: Card & { type: string }, monitor) => {
@@ -56,6 +74,7 @@ export default function PlayZone({
             JSON.stringify({
               action: "add",
               ...payload,
+              ...dimensions,
             })
           );
         });
@@ -67,6 +86,7 @@ export default function PlayZone({
             JSON.stringify({
               action: "update",
               ...payload,
+              ...dimensions,
             })
           );
         });
@@ -86,7 +106,11 @@ export default function PlayZone({
   return (
     <>
       <Typography variant="caption">Play area</Typography>
-      <div ref={drop} className={clsx(classes.root, rest.className)}>
+      <div
+        id="play-zone"
+        ref={drop}
+        className={clsx(classes.root, rest.className)}
+      >
         {play.map((card, i) => (
           <CardComponent
             key={"play" + i}

@@ -33,3 +33,34 @@ export function createDeck({
 
   return noShuffle ? deck : shuffle(deck);
 }
+
+export function transformCoords(peerData: any) {
+  const { width, height, offsetTop, offsetLeft, card, ...rest } = peerData;
+  const { x, y } = card;
+
+  const myPlayZone = document.getElementById("play-zone");
+  if (
+    !width ||
+    !height ||
+    !offsetTop ||
+    !offsetLeft ||
+    !x ||
+    !y ||
+    !myPlayZone
+  ) {
+    return peerData;
+  }
+
+  const widthScale = width / myPlayZone.clientWidth;
+  const heightScale = height / myPlayZone.clientHeight;
+  const translateX = myPlayZone.offsetLeft - offsetLeft;
+  const translateY = myPlayZone.offsetTop - offsetTop;
+
+  const newX = x / widthScale + translateX;
+  const newY = myPlayZone.offsetTop + (y - offsetTop) / heightScale;
+
+  return {
+    ...rest,
+    card: { ...card, x: newX, y: newY },
+  };
+}

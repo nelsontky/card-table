@@ -2,6 +2,7 @@ import Peer from "peerjs";
 
 import store from "../store";
 import { add, remove, update, flip, rotate } from "../slices/gameSlice";
+import { transformCoords } from "./utils";
 
 let peer: Peer;
 let conn: Peer.DataConnection;
@@ -42,7 +43,7 @@ function waitForConnection(destId?: string): Promise<Peer.DataConnection> {
 }
 
 export function handleData(data: string) {
-  const peerData = JSON.parse(data);
+  const peerData = transformCoords(JSON.parse(data));
   const { action, ...actionRemoved } = peerData;
   switch (action) {
     case "add":
