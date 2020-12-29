@@ -57,7 +57,8 @@ export function transformCoords(peerData: any) {
   const translateY = myPlayZone.offsetTop - offsetTop;
 
   const newX = x / widthScale + translateX;
-  const newY = myPlayZone.offsetTop + (y - offsetTop) / heightScale;
+  const newY =
+    myPlayZone.offsetTop + (y - offsetTop) / heightScale + translateY;
 
   return {
     ...rest,
