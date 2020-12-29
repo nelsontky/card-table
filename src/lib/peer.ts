@@ -10,8 +10,9 @@ let conn: Peer.DataConnection;
 export function getPeer(id?: string) {
   if (!peer || id) {
     peer = new Peer(id, {
-      host: "https://cardtable.cf",
-      port: 9000,
+      host: "cardtable.cf",
+      secure: true,
+      port: 443,
       path: "/myapp",
     });
   }
