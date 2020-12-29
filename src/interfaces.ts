@@ -4,6 +4,7 @@ import { XYCoord, DragSourceMonitor } from "react-dnd";
 export interface Card {
   id: string;
   cardId: string;
+  ownerId: number;
   isFaceDown: boolean;
   angle: number;
   x?: number;
@@ -50,7 +51,6 @@ export interface ICardComponent {
   card: Card;
   source: Section;
   dropCb?: (element: DragItem, monitor: DragSourceMonitor) => void;
-  noDrag?: boolean;
   disableActions?: boolean;
   size?: Size;
   [x: string]: any;

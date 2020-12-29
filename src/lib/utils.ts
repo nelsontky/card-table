@@ -3,6 +3,7 @@ import { v4 as uuidv4 } from "uuid";
 
 import { Card } from "../interfaces";
 import dragonicForce from "../decks/dragonicForce.json";
+import store from "../store";
 
 export function removeFromArray(pred: (element: any) => boolean, arr: any[]) {
   let copy = [...arr];
@@ -14,9 +15,11 @@ export function removeFromArray(pred: (element: any) => boolean, arr: any[]) {
 export function createDeck({
   deckName,
   noShuffle,
+  ownerId,
 }: {
   deckName: string;
   noShuffle?: boolean;
+  ownerId: number;
 }) {
   const deck = dragonicForce.reduce((acc, curr) => {
     const next = [...acc];
@@ -26,6 +29,7 @@ export function createDeck({
         id: uuidv4(),
         isFaceDown: true,
         angle: 0,
+        ownerId,
       });
     }
     return next;
@@ -36,7 +40,7 @@ export function createDeck({
 
 export function transformCoords(peerData: any) {
   const { width, height, offsetTop, offsetLeft, card, ...rest } = peerData;
-  const { x, y } = card;
+  const { x, y, angle } = card;
 
   const myPlayZone = document.getElementById("play-zone");
   if (
@@ -51,17 +55,22 @@ export function transformCoords(peerData: any) {
     return peerData;
   }
 
+  // TODO account for more players in diff directions
   const widthScale = width / myPlayZone.clientWidth;
   const heightScale = height / myPlayZone.clientHeight;
   const translateX = myPlayZone.offsetLeft - offsetLeft;
   const translateY = myPlayZone.offsetTop - offsetTop;
 
   const newX = x / widthScale + translateX;
-  const newY =
+  const transformedY =
     myPlayZone.offsetTop + (y - offsetTop) / heightScale + translateY;
+  const newY =
+    -(transformedY - document.body.clientHeight / 2) +
+    document.body.clientHeight / 2 -
+    52.5; // TODO get height dynamically
 
   return {
     ...rest,
-    card: { ...card, x: newX, y: newY },
+    card: { ...card, x: newX, y: newY, angle: angle + 180 },
   };
 }

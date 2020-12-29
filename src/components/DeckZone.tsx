@@ -36,6 +36,9 @@ export default function DeckZone({
   const dispatch = useDispatch();
   const deck: Card[] = useSelector((state: any) => state.game[playerId].deck);
 
+  const myPlayerId = useSelector((state: any) => state.playerId);
+  const isMine = myPlayerId === playerId;
+
   const handleClick = (button: string) => {
     switch (button) {
       case "Shuffle":
@@ -51,7 +54,7 @@ export default function DeckZone({
       set({
         playerId,
         section: "deck",
-        cards: createDeck({ deckName: "Dragonic Force" }),
+        cards: createDeck({ deckName: "Dragonic Force", ownerId: playerId }),
       })
     );
   }, [dispatch]);
@@ -66,6 +69,7 @@ export default function DeckZone({
       <Grid container className={clsx(classes.root, rest.className)}>
         <Grid item md={6} xs={12}>
           <CardComponent
+            noDrag={!isMine}
             disableActions
             dropCb={() => {
               dispatch(remove({ playerId, section: "deck", card: deck[0] }));
@@ -74,13 +78,15 @@ export default function DeckZone({
             card={deck[0]}
           />
         </Grid>
-        <Grid item container md={6} xs={12}>
-          {buttons.map((button, i) => (
-            <Grid key={"deck-button" + i} item>
-              <Button onClick={() => handleClick(button)}>{button}</Button>
-            </Grid>
-          ))}
-        </Grid>
+        {isMine && (
+          <Grid item container md={6} xs={12}>
+            {buttons.map((button, i) => (
+              <Grid key={"deck-button" + i} item>
+                <Button onClick={() => handleClick(button)}>{button}</Button>
+              </Grid>
+            ))}
+          </Grid>
+        )}
       </Grid>
     </>
   );

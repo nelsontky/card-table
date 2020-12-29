@@ -103,6 +103,9 @@ export default function PlayZone({
   });
   const classes = useStyles(monitor);
 
+  const myPlayerId = useSelector((state: any) => state.playerId);
+  const isMine = myPlayerId === playerId;
+
   return (
     <>
       <Typography variant="caption">Play area</Typography>
@@ -113,6 +116,7 @@ export default function PlayZone({
       >
         {play.map((card, i) => (
           <CardComponent
+            noDrag={!isMine}
             key={"play" + i}
             dropCb={(item, monitor) => {
               if (monitor.getDropResult().type !== "play") {

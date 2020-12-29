@@ -6,6 +6,7 @@ import { useDrag, XYCoord } from "react-dnd";
 
 import CardMenu from "./CardMenu";
 import { ICardComponent, DragItem } from "../interfaces";
+import { useSelector } from "react-redux";
 import { useCardDimensions } from "../lib/hooks";
 import ClosableBackdrop from "./ClosableBackdrop";
 
@@ -19,7 +20,7 @@ const useStyles = makeStyles<
   }
 >((theme: Theme) =>
   createStyles({
-    root: ({ card, width, height, hide }) => ({
+    root: ({ card, width, height, hide, isMine }) => ({
       backgroundImage:
         card.isFaceDown || hide
           ? undefined
@@ -27,7 +28,7 @@ const useStyles = makeStyles<
       backgroundSize: "cover",
       width,
       height,
-      cursor: "move",
+      cursor: isMine ? "move" : undefined,
       position: card.x && card.y ? "absolute" : "relative",
       top: card.y,
       left: card.x,
@@ -53,13 +54,14 @@ const useStyles = makeStyles<
       right: 0,
     },
     view: ({ card }) => ({
-      transform: `rotate(${card.angle}deg)`,
+      // TODO decide whether to support preview rotate
+      // transform: `rotate(${card.angle}deg)`,
     }),
   })
 );
 
 export default function CardComponent({ card, ...rest }: ICardComponent) {
-  const { source, dropCb, noDrag, disableActions, size } = rest;
+  const { source, dropCb, disableActions, size } = rest;
   const { width, height } = useCardDimensions(size);
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
   const [isView, setIsView] = React.useState(false);
@@ -77,12 +79,16 @@ export default function CardComponent({ card, ...rest }: ICardComponent) {
     }),
   });
 
+  const playerId = useSelector((state: any) => state.playerId);
+  const isMine = playerId === card.ownerId;
+
   const classes = useStyles({
     card,
     width,
     height,
     isDragging,
     clientOffset,
+    isMine,
     ...rest,
   });
 
@@ -107,10 +113,10 @@ export default function CardComponent({ card, ...rest }: ICardComponent) {
             setIsView(true);
           }
         }}
-        ref={noDrag ? undefined : drag}
+        ref={!isMine ? undefined : drag}
         className={clsx(classes.root, rest.className)}
       >
-        {!disableActions && (
+        {!disableActions && isMine && (
           <CardMenu
             className={classes.menu}
             card={card}
