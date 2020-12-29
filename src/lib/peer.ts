@@ -12,7 +12,7 @@ export function getPeer(id?: string) {
     peer = new Peer(id, {
       host: "localhost",
       port: 9000,
-      path: "/card",
+      path: "/myapp",
     });
   }
 
