@@ -7,8 +7,11 @@ import Button from "@material-ui/core/Button";
 import { Theme, createStyles, makeStyles } from "@material-ui/core/styles";
 import IconButton from "@material-ui/core/IconButton";
 import InputAdornment from "@material-ui/core/InputAdornment";
+import { useHistory } from "react-router-dom";
 
 import SendIcon from "@material-ui/icons/Send";
+
+import { getPeer } from "../lib/peer";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -23,6 +26,7 @@ const useStyles = makeStyles((theme: Theme) =>
 
 export default function Home() {
   const classes = useStyles();
+  const history = useHistory();
 
   const [roomId, setRoomId] = React.useState<number | "">("");
 
@@ -34,8 +38,13 @@ export default function Home() {
     e.preventDefault();
 
     if (roomId !== "") {
-      console.log(roomId);
+      history.push("/" + roomId);
     }
+  };
+
+  const startNewGame = () => {
+    const peerId = Math.floor(Math.random() * 10000) + "";
+    history.push({ pathname: "/" + peerId, state: { isHost: true } });
   };
 
   return (
@@ -73,7 +82,7 @@ export default function Home() {
           <Typography>Or</Typography>
         </Grid>
         <Grid item>
-          <Button variant="contained" color="primary">
+          <Button variant="contained" color="primary" onClick={startNewGame}>
             Start a new game
           </Button>
         </Grid>

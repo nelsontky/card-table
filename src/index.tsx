@@ -11,6 +11,7 @@ import { TouchBackend } from "react-dnd-touch-backend";
 import { DndProvider } from "react-dnd";
 import store from "./store";
 import { Provider } from "react-redux";
+import { BrowserRouter as Router } from "react-router-dom";
 
 let theme = createMuiTheme({
   palette: {
@@ -24,7 +25,9 @@ ReactDOM.render(
     <ThemeProvider theme={theme}>
       <DndProvider backend={TouchBackend} options={{ enableMouseEvents: true }}>
         <Provider store={store}>
-          <App />
+          <Router>
+            <App />
+          </Router>
         </Provider>
       </DndProvider>
     </ThemeProvider>

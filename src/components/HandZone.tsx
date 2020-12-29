@@ -7,8 +7,9 @@ import { useDispatch, useSelector } from "react-redux";
 import clsx from "clsx";
 
 import CardComponent from "./CardComponent";
-import { Card, Monitor, IHandZone } from "../interfaces";
+import { Card, Monitor, IHandZone, CrudGame } from "../interfaces";
 import { add, remove } from "../slices/gameSlice";
+import { getConn } from "../lib/peer";
 
 const useStyles = makeStyles<Theme, Monitor>((theme: Theme) =>
   createStyles({
@@ -29,13 +30,22 @@ export default function HandZone({ playerId, size, ...rest }: IHandZone) {
     accept: ["deck", "play"],
     drop: (item: Card & { type: string }) => {
       const { type, x, y, ...typeRemoved } = item;
-      dispatch(
-        add({
-          playerId,
-          section: "hand",
-          card: { ...typeRemoved, isFaceDown: false },
-        })
-      );
+      const payload = {
+        playerId,
+        section: "hand",
+        card: { ...typeRemoved, isFaceDown: false },
+      } as CrudGame;
+
+      dispatch(add(payload));
+
+      getConn().then((conn) => {
+        conn.send(
+          JSON.stringify({
+            action: "add",
+            ...payload,
+          })
+        );
+      });
       return { type: "hand" };
     },
     collect: (monitor) => ({
@@ -61,7 +71,17 @@ export default function HandZone({ playerId, size, ...rest }: IHandZone) {
               size={size}
               disableActions={playerId !== 0}
               dropCb={() => {
-                dispatch(remove({ playerId, section: "hand", card }));
+                const payload = { playerId, section: "hand", card } as CrudGame;
+                dispatch(remove(payload));
+
+                getConn().then((conn) => {
+                  conn.send(
+                    JSON.stringify({
+                      action: "remove",
+                      ...payload,
+                    })
+                  );
+                });
               }}
               source="hand"
               card={card}

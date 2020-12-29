@@ -1,7 +1,7 @@
 import { Size } from "../interfaces";
 
 export function useCardDimensions(size?: Size) {
-  const width = 100;
+  const width = 75;
   const height = width * 1.4;
 
   switch (size) {

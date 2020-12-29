@@ -1,10 +1,14 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
-import { Card, Section } from "../interfaces";
-import { SetGamePayload, CrudGamePayload } from "./interfaces";
+import {  Card, Section,SetGame, CrudGame } from "../interfaces";
 import { removeFromArray } from "../lib/utils";
 
 const initialState = [
+  {
+    deck: Array<Card>(),
+    hand: Array<Card>(),
+    play: Array<Card>(),
+  },
   {
     deck: Array<Card>(),
     hand: Array<Card>(),
@@ -16,22 +20,22 @@ export const slice = createSlice({
   name: "game",
   initialState,
   reducers: {
-    set: (state, action: SetGamePayload) => {
+    set: (state, action: PayloadAction<SetGame>) => {
       const { playerId, section, cards } = action.payload;
       state[playerId][section] = cards;
     },
-    add: (state, action: CrudGamePayload) => {
+    add: (state, action: PayloadAction<CrudGame>) => {
       const { playerId, section, card } = action.payload;
       state[playerId][section].push(card);
     },
-    remove: (state, action: CrudGamePayload) => {
+    remove: (state, action: PayloadAction<CrudGame>) => {
       const { playerId, section, card } = action.payload;
       state[playerId][section] = removeFromArray(
         (element) => element.id === card.id,
         state[playerId][section]
       );
     },
-    update: (state, action: CrudGamePayload) => {
+    update: (state, action: PayloadAction<CrudGame>) => {
       const { playerId, section, card } = action.payload;
       let edited = removeFromArray(
         (element) => element.id === card.id,

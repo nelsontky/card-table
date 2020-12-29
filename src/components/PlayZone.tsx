@@ -6,8 +6,9 @@ import clsx from "clsx";
 import Typography from "@material-ui/core/Typography";
 
 import CardComponent from "./CardComponent";
-import { Card, Monitor } from "../interfaces";
+import { Card, Monitor, CrudGame } from "../interfaces";
 import { add, update, remove } from "../slices/gameSlice";
+import { getConn } from "../lib/peer";
 
 const useStyles = makeStyles<Theme, Monitor>((theme: Theme) =>
   createStyles({
@@ -19,8 +20,20 @@ const useStyles = makeStyles<Theme, Monitor>((theme: Theme) =>
   })
 );
 
-export default function PlayZone({ ...rest }: { [x: string]: any }) {
-  const play: Card[] = useSelector((state: any) => state.game[0].play);
+export default function PlayZone({
+  playerId,
+  ...rest
+}: {
+  playerId: number;
+  [x: string]: any;
+}) {
+  const play: Card[] = useSelector((state: any) => {
+    let result: Card[] = [];
+    for (let player of state.game) {
+      result = [...result, ...player.play];
+    }
+    return result;
+  });
   const dispatch = useDispatch();
 
   const [monitor, drop] = useDrop({
@@ -29,19 +42,34 @@ export default function PlayZone({ ...rest }: { [x: string]: any }) {
       const { type, x: xRemoved, y: yRemoved, ...typeRemoved } = item;
       const itemType = monitor.getItemType();
       const { x, y } = monitor.getClientOffset() as XYCoord;
+      const payload = {
+        playerId,
+        section: "play",
+        card: { ...typeRemoved, x, y },
+      } as CrudGame;
 
       if (itemType === "hand" || itemType === "deck") {
-        dispatch(
-          add({ playerId: 0, section: "play", card: { ...typeRemoved, x, y } })
-        );
+        dispatch(add(payload));
+
+        getConn().then((conn) => {
+          conn.send(
+            JSON.stringify({
+              action: "add",
+              ...payload,
+            })
+          );
+        });
       } else {
-        dispatch(
-          update({
-            playerId: 0,
-            section: "play",
-            card: { ...typeRemoved, x, y },
-          })
-        );
+        dispatch(update(payload));
+
+        getConn().then((conn) => {
+          conn.send(
+            JSON.stringify({
+              action: "update",
+              ...payload,
+            })
+          );
+        });
       }
 
       return { type: "play" };
@@ -64,7 +92,22 @@ export default function PlayZone({ ...rest }: { [x: string]: any }) {
             key={"play" + i}
             dropCb={(item, monitor) => {
               if (monitor.getDropResult().type !== "play") {
-                dispatch(remove({ playerId: 0, section: "play", card: item }));
+                const payload = {
+                  playerId,
+                  section: "play",
+                  card: item,
+                } as CrudGame;
+
+                dispatch(remove(payload));
+
+                getConn().then((conn) => {
+                  conn.send(
+                    JSON.stringify({
+                      action: "remove",
+                      ...payload,
+                    })
+                  );
+                });
               }
             }}
             source="play"

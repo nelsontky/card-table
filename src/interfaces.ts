@@ -60,3 +60,15 @@ export interface IHandZone {
   size?: Size;
   [x: string]: any;
 }
+
+export interface SetGame {
+  playerId: number;
+  section: Section;
+  cards: Card[];
+}
+
+export interface CrudGame {
+  playerId: number;
+  section: Section;
+  card: Card;
+}

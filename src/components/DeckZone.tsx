@@ -5,6 +5,7 @@ import Button from "@material-ui/core/Button";
 import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
 import shuffle from "lodash/shuffle";
+import clsx from "clsx";
 
 import { Card } from "../interfaces";
 import CardComponent from "../components/CardComponent";
@@ -24,15 +25,21 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 );
 
-export default function DeckZone() {
+export default function DeckZone({
+  playerId,
+  ...rest
+}: {
+  playerId: number;
+  [x: string]: any;
+}) {
   const classes = useStyles();
   const dispatch = useDispatch();
-  const deck: Card[] = useSelector((state: any) => state.game[0].deck);
+  const deck: Card[] = useSelector((state: any) => state.game[playerId].deck);
 
   const handleClick = (button: string) => {
     switch (button) {
       case "Shuffle":
-        dispatch(set({ playerId: 0, section: "deck", cards: shuffle(deck) }));
+        dispatch(set({ playerId, section: "deck", cards: shuffle(deck) }));
         break;
       default:
       // TODO throw error here
@@ -42,7 +49,7 @@ export default function DeckZone() {
   React.useEffect(() => {
     dispatch(
       set({
-        playerId: 0,
+        playerId,
         section: "deck",
         cards: createDeck({ deckName: "Dragonic Force" }),
       })
@@ -56,12 +63,12 @@ export default function DeckZone() {
   return (
     <>
       <Typography variant="caption">Deck</Typography>
-      <Grid container className={classes.root}>
+      <Grid container className={clsx(classes.root, rest.className)}>
         <Grid item md={6} xs={12}>
           <CardComponent
             disableActions
             dropCb={() => {
-              dispatch(remove({ playerId: 0, section: "deck", card: deck[0] }));
+              dispatch(remove({ playerId, section: "deck", card: deck[0] }));
             }}
             source={"deck"}
             card={deck[0]}

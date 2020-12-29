@@ -1,17 +1,17 @@
 import React from "react";
-import CssBaseline from "@material-ui/core/CssBaseline";
 import { Theme, createStyles, makeStyles } from "@material-ui/core/styles";
 import Grid from "@material-ui/core/Grid";
 import { useDispatch, useSelector } from "react-redux";
 import { useCardDimensions } from "../lib/hooks";
+import { useParams, useLocation } from "react-router-dom";
 
-import { Card } from "../interfaces";
 import DeckZone from "../components/DeckZone";
 import HandZone from "../components/HandZone";
 import PlayZone from "../components/PlayZone";
 import { set, remove } from "../slices/gameSlice";
+import { set as setPlayerId } from "../slices/playerIdSlice";
 
-import dragonicForce from "../decks/dragonicForce.json";
+import { getPeer, getConn, handleData } from "../lib/peer";
 
 const useStyles = makeStyles<Theme, { height: number; heightSmall: number }>(
   (theme: Theme) =>
@@ -37,36 +37,66 @@ const useStyles = makeStyles<Theme, { height: number; heightSmall: number }>(
     })
 );
 
-function App() {
+function Game() {
   const { height } = useCardDimensions();
   const { height: heightSmall } = useCardDimensions("small");
   const classes = useStyles({ height, heightSmall });
+  const { id } = useParams<{ id: string }>();
+  const location = useLocation<any>();
+  const dispatch = useDispatch();
+
+  React.useEffect(() => {
+    const isHost = !!location.state?.isHost;
+    const peer = isHost ? getPeer(id) : getPeer();
+
+    peer.on("open", (peerId) => {
+      if (isHost) {
+        getConn().then((conn) => {
+          dispatch(setPlayerId(0));
+          conn.on("data", (data) => {
+            handleData(data);
+          });
+        });
+      } else {
+        getConn(id).then((conn) => {
+          dispatch(setPlayerId(1));
+          conn.on("data", (data) => {
+            handleData(data);
+          });
+        });
+      }
+    });
+  }, []);
+
+  const playerId = useSelector((state: any) => state.playerId);
+
+  if (playerId === -1) {
+    return <h1>Loading...</h1>;
+  }
 
   return (
-    <>
-      <CssBaseline />
-      <Grid container className={classes.root} direction="column">
-        <Grid item>
-          <HandZone
-            className={classes.handZoneOther}
-            size="small"
-            playerId={0}
-          />
+    <Grid container className={classes.root} direction="column">
+      <Grid className={classes.bottom} container item wrap="wrap" spacing={1}>
+        <Grid xs={9} item>
+          <HandZone className={classes.handZone} playerId={1} />
         </Grid>
-        <Grid className={classes.playZone} item>
-          <PlayZone className={classes.playZone} />
-        </Grid>
-        <Grid className={classes.bottom} container item wrap="wrap" spacing={1}>
-          <Grid xs={9} item>
-            <HandZone className={classes.handZone} playerId={0} />
-          </Grid>
-          <Grid item xs={3}>
-            <DeckZone />
-          </Grid>
+        <Grid item xs={3}>
+          <DeckZone className={classes.handZone} playerId={1} />
         </Grid>
       </Grid>
-    </>
+      <Grid className={classes.playZone} item>
+        <PlayZone playerId={playerId} className={classes.playZone} />
+      </Grid>
+      <Grid className={classes.bottom} container item wrap="wrap" spacing={1}>
+        <Grid xs={9} item>
+          <HandZone className={classes.handZone} playerId={0} />
+        </Grid>
+        <Grid item xs={3}>
+          <DeckZone playerId={0} />
+        </Grid>
+      </Grid>
+    </Grid>
   );
 }
 
-export default App;
+export default Game;
