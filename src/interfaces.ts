@@ -2,7 +2,7 @@ import React from "react";
 import { XYCoord, DragSourceMonitor } from "react-dnd";
 
 export interface Card {
-  id: number;
+  id: string;
   cardId: string;
   isFaceDown: boolean;
   angle: number;

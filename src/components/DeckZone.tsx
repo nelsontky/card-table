@@ -9,8 +9,7 @@ import shuffle from "lodash/shuffle";
 import { Card } from "../interfaces";
 import CardComponent from "../components/CardComponent";
 import { set, remove } from "../slices/gameSlice";
-
-import dragonicForce from "../decks/dragonicForce.json";
+import { createDeck } from "../lib/utils";
 
 const buttons = ["Shuffle"];
 
@@ -41,25 +40,11 @@ export default function DeckZone() {
   };
 
   React.useEffect(() => {
-    let id = 0;
     dispatch(
       set({
         playerId: 0,
         section: "deck",
-        cards: shuffle(
-          dragonicForce.reduce((acc, curr) => {
-            const next = [...acc];
-            for (let i = 0; i < curr.quantity; i++) {
-              next.push({
-                cardId: curr.id,
-                id: id++,
-                isFaceDown: true,
-                angle: 0,
-              });
-            }
-            return next;
-          }, Array<Card>())
-        ),
+        cards: createDeck({ deckName: "Dragonic Force" }),
       })
     );
   }, [dispatch]);
