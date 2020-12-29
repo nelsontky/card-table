@@ -2,7 +2,7 @@ import shuffle from "lodash/shuffle";
 import { v4 as uuidv4 } from "uuid";
 
 import { Card } from "../interfaces";
-import dragonicForce from "../decks/dragonicForce.json";
+import decks from "../decks.json";
 import store from "../store";
 
 export function removeFromArray(pred: (element: any) => boolean, arr: any[]) {
@@ -21,7 +21,8 @@ export function createDeck({
   noShuffle?: boolean;
   ownerId: number;
 }) {
-  const deck = dragonicForce.reduce((acc, curr) => {
+  const allDecks: any = decks;
+  const deck = allDecks[deckName].reduce((acc: any, curr: any) => {
     const next = [...acc];
     for (let i = 0; i < curr.quantity; i++) {
       next.push({

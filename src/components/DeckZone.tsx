@@ -54,7 +54,10 @@ export default function DeckZone({
       set({
         playerId,
         section: "deck",
-        cards: createDeck({ deckName: "Dragonic Force", ownerId: playerId }),
+        cards: createDeck({
+          deckName: myPlayerId === 0 ? "dragonicForce" : "ninjaOnslaught",
+          ownerId: playerId,
+        }),
       })
     );
   }, [dispatch]);

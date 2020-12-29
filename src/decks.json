@@ -1,0 +1,158 @@
+{
+  "dragonicForce": [
+    {
+      "id": "0",
+      "quantity": 2
+    },
+    {
+      "id": "1",
+      "quantity": 2
+    },
+    {
+      "id": "3",
+      "quantity": 4
+    },
+    {
+      "id": "4",
+      "quantity": 2
+    },
+    {
+      "id": "5",
+      "quantity": 4
+    },
+    {
+      "id": "6",
+      "quantity": 4
+    },
+    {
+      "id": "7",
+      "quantity": 3
+    },
+    {
+      "id": "8",
+      "quantity": 2
+    },
+    {
+      "id": "9",
+      "quantity": 2
+    },
+    {
+      "id": "10",
+      "quantity": 2
+    },
+    {
+      "id": "11",
+      "quantity": 3
+    },
+    {
+      "id": "12",
+      "quantity": 2
+    },
+    {
+      "id": "13",
+      "quantity": 2
+    },
+    {
+      "id": "14",
+      "quantity": 4
+    },
+    {
+      "id": "15",
+      "quantity": 3
+    },
+    {
+      "id": "16",
+      "quantity": 3
+    },
+    {
+      "id": "17",
+      "quantity": 3
+    },
+    {
+      "id": "18",
+      "quantity": 1
+    }
+  ],
+  "ninjaOnslaught": [
+    {
+      "id": "19",
+      "quantity": 4
+    },
+    {
+      "id": "20",
+      "quantity": 2
+    },
+    {
+      "id": "21",
+      "quantity": 4
+    },
+    {
+      "id": "22",
+      "quantity": 2
+    },
+    {
+      "id": "23",
+      "quantity": 4
+    },
+    {
+      "id": "24",
+      "quantity": 2
+    },
+    {
+      "id": "25",
+      "quantity": 4
+    },
+    {
+      "id": "26",
+      "quantity": 4
+    },
+    {
+      "id": "27",
+      "quantity": 3
+    },
+    {
+      "id": "28",
+      "quantity": 3
+    },
+    {
+      "id": "29",
+      "quantity": 2
+    },
+    {
+      "id": "30",
+      "quantity": 3
+    },
+    {
+      "id": "31",
+      "quantity": 1
+    },
+    {
+      "id": "32",
+      "quantity": 2
+    },
+    {
+      "id": "33",
+      "quantity": 4
+    },
+    {
+      "id": "34",
+      "quantity": 4
+    },
+    {
+      "id": "35",
+      "quantity": 1
+    },
+    {
+      "id": "36",
+      "quantity": 1
+    },
+    {
+      "id": "37",
+      "quantity": 1
+    },
+    {
+      "id": "38",
+      "quantity": 1
+    }
+  ]
+}

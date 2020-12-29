@@ -72,7 +72,11 @@ function Game() {
   const playerId = useSelector((state: any) => state.playerId);
 
   if (playerId === -1) {
-    return <h1>Loading...</h1>;
+    return isHost ? (
+      <h1>{`Ask a friend to join room "${id}"`}</h1>
+    ) : (
+      <h1>Loading...</h1>
+    );
   }
 
   return (
