@@ -43,10 +43,11 @@ function Game() {
   const classes = useStyles({ height, heightSmall });
   const { id } = useParams<{ id: string }>();
   const location = useLocation<any>();
+  const isHost = !!location.state?.isHost;
+
   const dispatch = useDispatch();
 
   React.useEffect(() => {
-    const isHost = !!location.state?.isHost;
     const peer = isHost ? getPeer(id) : getPeer();
 
     peer.on("open", (peerId) => {
@@ -78,10 +79,10 @@ function Game() {
     <Grid container className={classes.root} direction="column">
       <Grid className={classes.bottom} container item wrap="wrap" spacing={1}>
         <Grid xs={9} item>
-          <HandZone className={classes.handZone} playerId={1} />
+          <HandZone className={classes.handZone} playerId={isHost ? 1 : 0} />
         </Grid>
         <Grid item xs={3}>
-          <DeckZone className={classes.handZone} playerId={1} />
+          <DeckZone className={classes.handZone} playerId={isHost ? 1 : 0} />
         </Grid>
       </Grid>
       <Grid className={classes.playZone} item>
@@ -89,10 +90,10 @@ function Game() {
       </Grid>
       <Grid className={classes.bottom} container item wrap="wrap" spacing={1}>
         <Grid xs={9} item>
-          <HandZone className={classes.handZone} playerId={0} />
+          <HandZone className={classes.handZone} playerId={isHost ? 0 : 1} />
         </Grid>
         <Grid item xs={3}>
-          <DeckZone playerId={0} />
+          <DeckZone playerId={isHost ? 0 : 1} />
         </Grid>
       </Grid>
     </Grid>

@@ -19,10 +19,11 @@ const useStyles = makeStyles<
   }
 >((theme: Theme) =>
   createStyles({
-    root: ({ card, width, height }) => ({
-      backgroundImage: card.isFaceDown
-        ? undefined
-        : `url(${process.env.PUBLIC_URL}/cards/${card.cardId}.png)`,
+    root: ({ card, width, height, hide }) => ({
+      backgroundImage:
+        card.isFaceDown || hide
+          ? undefined
+          : `url(${process.env.PUBLIC_URL}/cards/${card.cardId}.png)`,
       backgroundSize: "cover",
       width,
       height,

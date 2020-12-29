@@ -28,6 +28,7 @@ export interface Monitor {
   isOver?: boolean;
   clientOffset?: XYCoord | null;
   card?: Card;
+  isMine?: boolean;
 }
 
 export interface PlayerState {

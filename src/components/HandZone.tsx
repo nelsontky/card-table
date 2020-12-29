@@ -13,9 +13,9 @@ import { getConn } from "../lib/peer";
 
 const useStyles = makeStyles<Theme, Monitor>((theme: Theme) =>
   createStyles({
-    root: ({ canDrop, isOver }) => ({
+    root: ({ canDrop, isOver, isMine }) => ({
       width: "100%",
-      borderStyle: canDrop ? "dashed" : "solid",
+      borderStyle: canDrop && isMine ? "dashed" : "solid",
       borderColor: isOver ? "green" : "white",
       overflowX: "scroll",
     }),
@@ -25,6 +25,9 @@ const useStyles = makeStyles<Theme, Monitor>((theme: Theme) =>
 export default function HandZone({ playerId, size, ...rest }: IHandZone) {
   const hand: Card[] = useSelector((state: any) => state.game[playerId].hand);
   const dispatch = useDispatch();
+
+  const myPlayerId = useSelector((state: any) => state.playerId);
+  const isMine = myPlayerId === playerId;
 
   const [{ canDrop, isOver }, drop] = useDrop({
     accept: ["deck", "play"],
@@ -54,7 +57,7 @@ export default function HandZone({ playerId, size, ...rest }: IHandZone) {
     }),
   });
 
-  const classes = useStyles({ canDrop, isOver });
+  const classes = useStyles({ canDrop, isOver, isMine });
 
   return (
     <>
@@ -62,12 +65,13 @@ export default function HandZone({ playerId, size, ...rest }: IHandZone) {
       <Grid
         container
         wrap="nowrap"
-        ref={drop}
+        ref={isMine ? drop : undefined}
         className={clsx(classes.root, rest.className)}
       >
         {hand.map((card, i) => (
           <Grid item key={"hand" + i}>
             <CardComponent
+              hide={!isMine}
               size={size}
               disableActions={playerId !== 0}
               dropCb={() => {
