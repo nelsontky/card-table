@@ -1,6 +1,6 @@
 import React from "react";
 import { Theme, createStyles, makeStyles } from "@material-ui/core/styles";
-import Grid from "@material-ui/core/Grid";
+import { Grid } from "@material-ui/core";
 import { useDispatch, useSelector } from "react-redux";
 import { useCardDimensions } from "../lib/hooks";
 import { useParams, useLocation } from "react-router-dom";
@@ -8,7 +8,6 @@ import { useParams, useLocation } from "react-router-dom";
 import DeckZone from "../components/DeckZone";
 import HandZone from "../components/HandZone";
 import PlayZone from "../components/PlayZone";
-import { set, remove } from "../slices/gameSlice";
 import { set as setPlayerId } from "../slices/playerIdSlice";
 
 import { getPeer, getConn, handleData } from "../lib/peer";
@@ -67,7 +66,7 @@ function Game() {
         });
       }
     });
-  }, []);
+  }, [dispatch, id, isHost]);
 
   const playerId = useSelector((state: any) => state.playerId);
 

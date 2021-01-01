@@ -1,9 +1,7 @@
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Theme, createStyles, makeStyles } from "@material-ui/core/styles";
-import Button from "@material-ui/core/Button";
-import Grid from "@material-ui/core/Grid";
-import Typography from "@material-ui/core/Typography";
+import { Button, Grid, Typography } from "@material-ui/core";
 import shuffle from "lodash/shuffle";
 import clsx from "clsx";
 
@@ -60,7 +58,7 @@ export default function DeckZone({
         }),
       })
     );
-  }, [dispatch]);
+  }, [dispatch, playerId, myPlayerId]);
 
   if (deck.length <= 0) {
     return null;

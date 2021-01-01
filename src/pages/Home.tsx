@@ -1,17 +1,17 @@
 import React from "react";
-import Container from "@material-ui/core/Container";
-import Grid from "@material-ui/core/Grid";
-import Typography from "@material-ui/core/Typography";
-import TextField from "@material-ui/core/TextField";
-import Button from "@material-ui/core/Button";
+import {
+  Container,
+  Grid,
+  Typography,
+  TextField,
+  Button,
+  IconButton,
+  InputAdornment,
+} from "@material-ui/core";
 import { Theme, createStyles, makeStyles } from "@material-ui/core/styles";
-import IconButton from "@material-ui/core/IconButton";
-import InputAdornment from "@material-ui/core/InputAdornment";
 import { useHistory } from "react-router-dom";
 
-import SendIcon from "@material-ui/icons/Send";
-
-import { getPeer } from "../lib/peer";
+import { Send as SendIcon } from "@material-ui/icons";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({

@@ -1,11 +1,11 @@
 import React from "react";
-import Paper from "@material-ui/core/Paper";
+import { Paper } from "@material-ui/core";
 import { Theme, createStyles, makeStyles } from "@material-ui/core/styles";
 import clsx from "clsx";
 import { useDrag, XYCoord } from "react-dnd";
 
 import CardMenu from "./CardMenu";
-import { ICardComponent, DragItem } from "../interfaces";
+import { ICardComponent } from "../interfaces";
 import { useSelector } from "react-redux";
 import { useCardDimensions } from "../lib/hooks";
 import ClosableBackdrop from "./ClosableBackdrop";

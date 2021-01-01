@@ -3,7 +3,6 @@ import { v4 as uuidv4 } from "uuid";
 
 import { Card } from "../interfaces";
 import decks from "../decks.json";
-import store from "../store";
 
 export function removeFromArray(pred: (element: any) => boolean, arr: any[]) {
   let copy = [...arr];

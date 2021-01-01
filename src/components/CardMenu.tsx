@@ -1,9 +1,7 @@
 import React from "react";
 import { withStyles, Theme, fade } from "@material-ui/core/styles";
-import IconButton from "@material-ui/core/IconButton";
-import Menu from "@material-ui/core/Menu";
-import MenuItem from "@material-ui/core/MenuItem";
-import MoreVertIcon from "@material-ui/icons/MoreVert";
+import { IconButton, Menu, MenuItem } from "@material-ui/core";
+import { MoreVert as MoreVertIcon } from "@material-ui/icons";
 import { useDispatch, useSelector } from "react-redux";
 
 import { ICardMenu } from "../interfaces";

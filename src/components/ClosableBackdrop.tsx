@@ -1,10 +1,8 @@
 import React from "react";
-import Backdrop from "@material-ui/core/Backdrop";
-import IconButton from "@material-ui/core/IconButton";
-import Grid from "@material-ui/core/Grid";
+import { Backdrop, IconButton, Grid } from "@material-ui/core";
 import { makeStyles, createStyles, Theme } from "@material-ui/core/styles";
 
-import CloseIcon from "@material-ui/icons/Close";
+import { Close as CloseIcon } from "@material-ui/icons";
 
 import { IClosableBackdrop } from "../interfaces";
 
