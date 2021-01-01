@@ -121,7 +121,7 @@ export default function CardMenu({
         onClose={handleClose}
         PaperProps={{
           style: {
-            maxHeight: ITEM_HEIGHT * 3,
+            maxHeight: ITEM_HEIGHT * 4,
             width: "20ch",
           },
         }}
