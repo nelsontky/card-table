@@ -52,6 +52,7 @@ export interface ICardComponent {
   source: Section;
   dropCb?: (element: DragItem, monitor: DragSourceMonitor) => void;
   disableActions?: boolean;
+  noDrag?: boolean;
   size?: Size;
   [x: string]: any;
 }
@@ -72,4 +73,5 @@ export interface CrudGame {
   playerId: number;
   section: Section;
   card: Card;
+  addToFront?: boolean;
 }

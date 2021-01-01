@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
-import {  Card, Section,SetGame, CrudGame } from "../interfaces";
+import { Card, Section, SetGame, CrudGame } from "../interfaces";
 import { removeFromArray } from "../lib/utils";
 
 const initialState = [
@@ -25,8 +25,13 @@ export const slice = createSlice({
       state[playerId][section] = cards;
     },
     add: (state, action: PayloadAction<CrudGame>) => {
-      const { playerId, section, card } = action.payload;
-      state[playerId][section].push(card);
+      const { playerId, section, card, addToFront } = action.payload;
+
+      if (addToFront) {
+        state[playerId][section].unshift(card);
+      } else {
+        state[playerId][section].push(card);
+      }
     },
     remove: (state, action: PayloadAction<CrudGame>) => {
       const { playerId, section, card } = action.payload;
