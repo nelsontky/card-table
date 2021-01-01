@@ -63,7 +63,7 @@ export default function DeckZone({
         playerId,
         section: "deck",
         addToFront: true,
-        card: { ...typeRemoved, isFaceDown: true },
+        card: { ...typeRemoved, isFaceDown: true, angle: 0 },
       } as CrudGame;
 
       dispatch(add(payload));
