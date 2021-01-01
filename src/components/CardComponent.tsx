@@ -20,7 +20,7 @@ const useStyles = makeStyles<
   }
 >((theme: Theme) =>
   createStyles({
-    root: ({ card, width, height, hide, isMine }) => ({
+    root: ({ card, width, height, hide, isMine, noDrag }) => ({
       backgroundImage:
         card.isFaceDown || hide
           ? undefined
@@ -28,7 +28,7 @@ const useStyles = makeStyles<
       backgroundSize: "cover",
       width,
       height,
-      cursor: isMine ? "move" : undefined,
+      cursor: isMine && !noDrag ? "move" : undefined,
       position: card.x && card.y ? "absolute" : "relative",
       top: card.y,
       left: card.x,
@@ -62,7 +62,7 @@ const useStyles = makeStyles<
 );
 
 export default function CardComponent({ card, ...rest }: ICardComponent) {
-  const { source, dropCb, disableActions, size } = rest;
+  const { source, dropCb, disableActions, size, noDrag } = rest;
   const { width, height } = useCardDimensions(size);
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
   const [isView, setIsView] = React.useState(false);
@@ -114,7 +114,7 @@ export default function CardComponent({ card, ...rest }: ICardComponent) {
             setIsView(true);
           }
         }}
-        ref={!isMine ? undefined : drag}
+        ref={!isMine || noDrag ? undefined : drag}
         className={clsx(classes.root, rest.className)}
       >
         {!disableActions && isMine && (

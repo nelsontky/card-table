@@ -52,6 +52,7 @@ export interface ICardComponent {
   source: Section;
   dropCb?: (element: DragItem, monitor: DragSourceMonitor) => void;
   disableActions?: boolean;
+  noDrag?: boolean;
   size?: Size;
   [x: string]: any;
 }
