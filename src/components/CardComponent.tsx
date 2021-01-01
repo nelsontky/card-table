@@ -47,6 +47,7 @@ const useStyles = makeStyles<
       top: clientOffset ? clientOffset.y : undefined,
       left: clientOffset ? clientOffset.x : undefined,
       transform: `rotate(${card.angle}deg)`,
+      zIndex: 1,
     }),
     menu: {
       position: "absolute",

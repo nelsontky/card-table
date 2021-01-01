@@ -1,6 +1,6 @@
 import React from "react";
 import { Theme, createStyles, makeStyles } from "@material-ui/core/styles";
-import { Grid } from "@material-ui/core";
+import { Grid, Box } from "@material-ui/core";
 import { useDispatch, useSelector } from "react-redux";
 import { useCardDimensions } from "../lib/hooks";
 import { useParams, useLocation } from "react-router-dom";
@@ -19,19 +19,10 @@ const useStyles = makeStyles<Theme, { height: number; heightSmall: number }>(
         width: "100%",
         height: "100vh",
         padding: theme.spacing(1),
+        margin: "0 auto",
       },
       playZone: {
         flexGrow: 1,
-        marginBottom: theme.spacing(2),
-      },
-      handZone: ({ height }) => ({
-        height: height + theme.spacing(3),
-      }),
-      handZoneOther: ({ heightSmall }) => ({
-        height: heightSmall + theme.spacing(3),
-      }),
-      bottom: {
-        width: "100%",
       },
     })
 );
@@ -79,19 +70,27 @@ function Game() {
   }
 
   return (
-    <Grid container className={classes.root} direction="column">
-      <Grid className={classes.bottom} container item wrap="wrap" spacing={1}>
+    <Grid container className={classes.root} direction="column" spacing={1}>
+      <Grid container item wrap="wrap" spacing={1}>
         <Grid xs={9} item>
-          <HandZone className={classes.handZone} playerId={isHost ? 1 : 0} />
+          <HandZone
+            size="small"
+            className={classes.handZone}
+            playerId={isHost ? 1 : 0}
+          />
         </Grid>
         <Grid item xs={3}>
-          <DeckZone className={classes.handZone} playerId={isHost ? 1 : 0} />
+          <DeckZone
+            size="small"
+            className={classes.handZone}
+            playerId={isHost ? 1 : 0}
+          />
         </Grid>
       </Grid>
       <Grid className={classes.playZone} item>
         <PlayZone playerId={playerId} className={classes.playZone} />
       </Grid>
-      <Grid className={classes.bottom} container item wrap="wrap" spacing={1}>
+      <Grid container item wrap="wrap" spacing={1}>
         <Grid xs={9} item>
           <HandZone className={classes.handZone} playerId={isHost ? 0 : 1} />
         </Grid>

@@ -16,6 +16,7 @@ const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: () => ({
       width: "100%",
+      height: "100%",
       borderStyle: "solid",
       borderColor: "white",
       padding: theme.spacing(1),
@@ -65,30 +66,28 @@ export default function DeckZone({
   }
 
   return (
-    <>
-      <Typography variant="caption">Deck</Typography>
-      <Grid container className={clsx(classes.root, rest.className)}>
-        <Grid item md={6} xs={12}>
-          <CardComponent
-            noDrag={!isMine}
-            disableActions
-            dropCb={() => {
-              dispatch(remove({ playerId, section: "deck", card: deck[0] }));
-            }}
-            source={"deck"}
-            card={deck[0]}
-          />
-        </Grid>
-        {isMine && (
-          <Grid item container md={6} xs={12}>
-            {buttons.map((button, i) => (
-              <Grid key={"deck-button" + i} item>
-                <Button onClick={() => handleClick(button)}>{button}</Button>
-              </Grid>
-            ))}
-          </Grid>
-        )}
+    <Grid container className={clsx(classes.root, rest.className)}>
+      <Grid item md={6} xs={12}>
+        <CardComponent
+          size={rest.size}
+          noDrag={!isMine}
+          disableActions
+          dropCb={() => {
+            dispatch(remove({ playerId, section: "deck", card: deck[0] }));
+          }}
+          source={"deck"}
+          card={deck[0]}
+        />
       </Grid>
-    </>
+      {isMine && (
+        <Grid item container md={6} xs={12}>
+          {buttons.map((button, i) => (
+            <Grid key={"deck-button" + i} item>
+              <Button onClick={() => handleClick(button)}>{button}</Button>
+            </Grid>
+          ))}
+        </Grid>
+      )}
+    </Grid>
   );
 }

@@ -107,42 +107,39 @@ export default function PlayZone({
   const isMine = myPlayerId === playerId;
 
   return (
-    <>
-      <Typography variant="caption">Play area</Typography>
-      <div
-        id="play-zone"
-        ref={drop}
-        className={clsx(classes.root, rest.className)}
-      >
-        {play.map((card, i) => (
-          <CardComponent
-            noDrag={!isMine}
-            key={"play" + i}
-            dropCb={(item, monitor) => {
-              if (monitor.getDropResult().type !== "play") {
-                const payload = {
-                  playerId,
-                  section: "play",
-                  card: item,
-                } as CrudGame;
+    <div
+      id="play-zone"
+      ref={drop}
+      className={clsx(classes.root, rest.className)}
+    >
+      {play.map((card, i) => (
+        <CardComponent
+          noDrag={!isMine}
+          key={"play" + i}
+          dropCb={(item, monitor) => {
+            if (monitor.getDropResult().type !== "play") {
+              const payload = {
+                playerId,
+                section: "play",
+                card: item,
+              } as CrudGame;
 
-                dispatch(remove(payload));
+              dispatch(remove(payload));
 
-                getConn().then((conn) => {
-                  conn.send(
-                    JSON.stringify({
-                      action: "remove",
-                      ...payload,
-                    })
-                  );
-                });
-              }
-            }}
-            source="play"
-            card={card}
-          />
-        ))}
-      </div>
-    </>
+              getConn().then((conn) => {
+                conn.send(
+                  JSON.stringify({
+                    action: "remove",
+                    ...payload,
+                  })
+                );
+              });
+            }
+          }}
+          source="play"
+          card={card}
+        />
+      ))}
+    </div>
   );
 }

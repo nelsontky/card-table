@@ -14,6 +14,7 @@ const useStyles = makeStyles<Theme, Monitor>((theme: Theme) =>
   createStyles({
     root: ({ canDrop, isOver, isMine }) => ({
       width: "100%",
+      height: "100%",
       borderStyle: canDrop && isMine ? "dashed" : "solid",
       borderColor: isOver ? "green" : "white",
       overflowX: "scroll",
@@ -59,39 +60,36 @@ export default function HandZone({ playerId, size, ...rest }: IHandZone) {
   const classes = useStyles({ canDrop, isOver, isMine });
 
   return (
-    <>
-      <Typography variant="caption">Hand</Typography>
-      <Grid
-        container
-        wrap="nowrap"
-        ref={isMine ? drop : undefined}
-        className={clsx(classes.root, rest.className)}
-      >
-        {hand.map((card, i) => (
-          <Grid item key={"hand" + i}>
-            <CardComponent
-              hide={!isMine}
-              size={size}
-              disableActions={playerId !== 0}
-              dropCb={() => {
-                const payload = { playerId, section: "hand", card } as CrudGame;
-                dispatch(remove(payload));
+    <Grid
+      container
+      wrap="nowrap"
+      ref={isMine ? drop : undefined}
+      className={clsx(classes.root, rest.className)}
+    >
+      {hand.map((card, i) => (
+        <Grid item key={"hand" + i}>
+          <CardComponent
+            hide={!isMine}
+            size={size}
+            disableActions={playerId !== 0}
+            dropCb={() => {
+              const payload = { playerId, section: "hand", card } as CrudGame;
+              dispatch(remove(payload));
 
-                getConn().then((conn) => {
-                  conn.send(
-                    JSON.stringify({
-                      action: "remove",
-                      ...payload,
-                    })
-                  );
-                });
-              }}
-              source="hand"
-              card={card}
-            />
-          </Grid>
-        ))}
-      </Grid>
-    </>
+              getConn().then((conn) => {
+                conn.send(
+                  JSON.stringify({
+                    action: "remove",
+                    ...payload,
+                  })
+                );
+              });
+            }}
+            source="hand"
+            card={card}
+          />
+        </Grid>
+      ))}
+    </Grid>
   );
 }
