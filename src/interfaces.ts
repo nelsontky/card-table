@@ -73,4 +73,5 @@ export interface CrudGame {
   playerId: number;
   section: Section;
   card: Card;
+  addToFront?: boolean;
 }
