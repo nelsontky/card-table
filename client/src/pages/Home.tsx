@@ -70,6 +70,21 @@ export default function Home() {
   const currUser = firebase.auth().currentUser;
   console.log(currUser);
 
+  firebase.auth().onAuthStateChanged(function (user) {
+    if (user) {
+      user
+        .getIdToken(/* forceRefresh */ true)
+        .then(function (idToken) {
+          console.log(idToken);
+        })
+        .catch(function (error) {
+          // Handle error
+        });
+    } else {
+      // No user is signed in.
+    }
+  });
+
   if (currUser) {
     currUser
       .getIdToken(/* forceRefresh */ true)
