@@ -1,0 +1,40 @@
+version: "3.8"
+
+services:
+  server:
+    image: node:current-alpine
+    env_file:
+      - .env
+    command:
+      sh -c "npm install -g @nestjs/cli && npm install && npm run start:dev"
+    ports:
+      - 5000:5000
+    working_dir: /app
+    volumes:
+      - ./server:/app
+
+  client:
+    image: node:lts-alpine
+    command: sh -c "npm install && npm run start"
+    ports:
+      - 3000:3000
+    working_dir: /app
+    volumes:
+      - ./client:/app
+
+  postgres:
+    image: postgres:latest
+    env_file:
+      - .env
+    volumes:
+      - postgres-dev-card-table:/var/lib/postgresql/data
+
+  adminer:
+    image: adminer
+    ports:
+      - 8080:8080
+    logging:
+      driver: none
+
+volumes:
+  postgres-dev-card-table:
