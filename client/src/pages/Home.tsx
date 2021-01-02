@@ -1,4 +1,5 @@
 import React from "react";
+import StyledFirebaseAuth from "react-firebaseui/StyledFirebaseAuth";
 import {
   Container,
   Grid,
@@ -7,19 +8,21 @@ import {
   Button,
   IconButton,
   InputAdornment,
+  Box,
 } from "@material-ui/core";
 import { Theme, createStyles, makeStyles } from "@material-ui/core/styles";
 import { useHistory } from "react-router-dom";
 
 import { Send as SendIcon } from "@material-ui/icons";
+import firebase from "firebase";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
-      textAlign: "center",
+      padding: theme.spacing(1),
     },
-    container: {
-      height: "100vh",
+    marginBottom: {
+      marginBottom: theme.spacing(1),
     },
   })
 );
@@ -47,14 +50,48 @@ export default function Home() {
     history.push({ pathname: "/" + peerId, state: { isHost: true } });
   };
 
+  // Configure FirebaseUI.
+  const uiConfig = {
+    signInFlow: "redirect",
+    signInSuccessUrl: "/",
+    signInOptions: [
+      {
+        provider: firebase.auth.EmailAuthProvider.PROVIDER_ID,
+        signInMethod: firebase.auth.EmailAuthProvider.EMAIL_LINK_SIGN_IN_METHOD,
+      },
+      firebase.auth.GoogleAuthProvider.PROVIDER_ID,
+    ],
+    callbacks: {
+      // Avoid redirects after sign-in.
+      signInSuccessWithAuthResult: () => false,
+    },
+  };
+
+  const currUser = firebase.auth().currentUser;
+  console.log(currUser);
+
+  if (currUser) {
+    currUser
+      .getIdToken(/* forceRefresh */ true)
+      .then(function (idToken) {
+        console.log(idToken);
+      })
+      .catch(function (error) {
+        // Handle error
+      });
+  }
+
   return (
     <Container maxWidth="md" className={classes.root}>
+      <Typography gutterBottom variant="h5">
+        Play a game
+      </Typography>
       <Grid
         container
         direction="column"
         spacing={2}
         justify="center"
-        className={classes.container}
+        className={classes.marginBottom}
       >
         <Grid item>
           <form noValidate autoComplete="off" onSubmit={onSubmit}>
@@ -87,6 +124,15 @@ export default function Home() {
           </Button>
         </Grid>
       </Grid>
+      <Box className={classes.marginBottom}>
+        <Typography variant="h5">Your Decks</Typography>
+      </Box>
+      <Box className={classes.marginBottom}>
+        <Typography variant="h5">Games</Typography>
+        <Typography variant="h6">Your Games</Typography>
+        <Typography variant="h6">Available games</Typography>
+      </Box>
+      <StyledFirebaseAuth uiConfig={uiConfig} firebaseAuth={firebase.auth()} />
     </Container>
   );
 }
