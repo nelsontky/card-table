@@ -1,5 +1,4 @@
 import React from "react";
-import StyledFirebaseAuth from "react-firebaseui/StyledFirebaseAuth";
 import {
   Container,
   Grid,
@@ -14,7 +13,8 @@ import { Theme, createStyles, makeStyles } from "@material-ui/core/styles";
 import { useHistory } from "react-router-dom";
 
 import { Send as SendIcon } from "@material-ui/icons";
-import firebase from "firebase";
+
+import Login from "../components/Login";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -49,52 +49,6 @@ export default function Home() {
     const peerId = Math.floor(Math.random() * 10000) + "";
     history.push({ pathname: "/" + peerId, state: { isHost: true } });
   };
-
-  // Configure FirebaseUI.
-  const uiConfig = {
-    signInFlow: "redirect",
-    signInSuccessUrl: "/",
-    signInOptions: [
-      {
-        provider: firebase.auth.EmailAuthProvider.PROVIDER_ID,
-        signInMethod: firebase.auth.EmailAuthProvider.EMAIL_LINK_SIGN_IN_METHOD,
-      },
-      firebase.auth.GoogleAuthProvider.PROVIDER_ID,
-    ],
-    callbacks: {
-      // Avoid redirects after sign-in.
-      signInSuccessWithAuthResult: () => false,
-    },
-  };
-
-  const currUser = firebase.auth().currentUser;
-  console.log(currUser);
-
-  firebase.auth().onAuthStateChanged(function (user) {
-    if (user) {
-      user
-        .getIdToken(/* forceRefresh */ true)
-        .then(function (idToken) {
-          console.log(idToken);
-        })
-        .catch(function (error) {
-          // Handle error
-        });
-    } else {
-      // No user is signed in.
-    }
-  });
-
-  if (currUser) {
-    currUser
-      .getIdToken(/* forceRefresh */ true)
-      .then(function (idToken) {
-        console.log(idToken);
-      })
-      .catch(function (error) {
-        // Handle error
-      });
-  }
 
   return (
     <Container maxWidth="md" className={classes.root}>
@@ -147,7 +101,7 @@ export default function Home() {
         <Typography variant="h6">Your Games</Typography>
         <Typography variant="h6">Available games</Typography>
       </Box>
-      <StyledFirebaseAuth uiConfig={uiConfig} firebaseAuth={firebase.auth()} />
+      <Login />
     </Container>
   );
 }

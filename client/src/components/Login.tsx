@@ -1,0 +1,49 @@
+import React from "react";
+import StyledFirebaseAuth from "react-firebaseui/StyledFirebaseAuth";
+import firebase from "firebase";
+import { useDispatch, useSelector } from "react-redux";
+
+import { login } from "../slices/userSlice";
+
+export default function Login() {
+  const dispatch = useDispatch();
+
+  React.useEffect(() => {
+    const unregisterAuthObserver = firebase
+      .auth()
+      .onAuthStateChanged((user) => {
+        if (user) {
+          dispatch(login(user.uid));
+        }
+      });
+
+    return () => unregisterAuthObserver();
+  }, []);
+
+  const user = useSelector((state: any) => state.user);
+
+  // Configure FirebaseUI.
+  const uiConfig = {
+    signInFlow: "popup",
+    signInSuccessUrl: "/",
+    signInOptions: [
+      {
+        provider: firebase.auth.EmailAuthProvider.PROVIDER_ID,
+        signInMethod: firebase.auth.EmailAuthProvider.EMAIL_LINK_SIGN_IN_METHOD,
+      },
+      firebase.auth.GoogleAuthProvider.PROVIDER_ID,
+    ],
+    callbacks: {
+      // Avoid redirects after sign-in.
+      signInSuccessWithAuthResult: () => false,
+    },
+  };
+
+  if (!user) {
+    return (
+      <StyledFirebaseAuth uiConfig={uiConfig} firebaseAuth={firebase.auth()} />
+    );
+  } else {
+    return null;
+  }
+}
