@@ -12,8 +12,9 @@ import {
 } from "@material-ui/core";
 
 import CardComponent from "./CardComponent";
-import { Card } from "../interfaces";
+import { Card, CrudGame } from "../interfaces";
 import { add, remove } from "../slices/gameSlice";
+import { getConn } from "../lib/peer";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -64,21 +65,36 @@ export default function BrowseDeck({
     for (const id of Object.keys(selected)) {
       if (selected[id]) {
         const cardToDraw = deck.find((card: Card) => card.id === id);
-        dispatch(
-          remove({
-            card: cardToDraw,
-            playerId,
-            section: "deck",
-          })
-        );
 
-        dispatch(
-          add({
-            card: { ...cardToDraw, isFaceDown: false },
-            playerId,
-            section: "hand",
-          })
-        );
+        const removePayload = {
+          card: cardToDraw,
+          playerId,
+          section: "deck",
+        } as CrudGame;
+        dispatch(remove(removePayload));
+        getConn().then((conn) => {
+          conn.send(
+            JSON.stringify({
+              action: "remove",
+              ...removePayload,
+            })
+          );
+        });
+
+        const addPayload = {
+          card: { ...cardToDraw, isFaceDown: false },
+          playerId,
+          section: "hand",
+        } as CrudGame;
+        dispatch(add(addPayload));
+        getConn().then((conn) => {
+          conn.send(
+            JSON.stringify({
+              action: "add",
+              ...addPayload,
+            })
+          );
+        });
       }
     }
 
@@ -128,10 +144,8 @@ export default function BrowseDeck({
         </Grid>
       </DialogContent>
       <DialogActions>
-        <Button onClick={handleClose} color="primary">
-          Close
-        </Button>
-        <Button onClick={drawSelected} color="primary" autoFocus>
+        <Button onClick={handleClose}>Close</Button>
+        <Button onClick={drawSelected} autoFocus>
           Draw selected
         </Button>
       </DialogActions>
