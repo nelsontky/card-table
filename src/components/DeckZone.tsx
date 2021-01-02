@@ -106,7 +106,11 @@ export default function DeckZone({
   return (
     <>
       <BrowseDeck isOpen={isBrowseDeck} setIsOpen={setIsBrowseDeck} />
-      <Grid ref={drop} container className={clsx(classes.root, rest.className)}>
+      <Grid
+        ref={isMine ? drop : undefined}
+        container
+        className={clsx(classes.root, rest.className)}
+      >
         <Grid item md={3} xs={12}>
           <CardComponent
             size={rest.size}
