@@ -1,5 +1,11 @@
 import React from "react";
-import { withStyles, Theme, fade } from "@material-ui/core/styles";
+import {
+  withStyles,
+  Theme,
+  fade,
+  createStyles,
+  makeStyles,
+} from "@material-ui/core/styles";
 import { IconButton, Menu, MenuItem } from "@material-ui/core";
 import { MoreVert as MoreVertIcon } from "@material-ui/icons";
 import { useDispatch, useSelector } from "react-redux";
@@ -11,6 +17,21 @@ import { getConn } from "../lib/peer";
 const options = ["Flip", "Rotate right", "Rotate 180°", "Rotate left"];
 
 const ITEM_HEIGHT = 40;
+
+const useStyles = makeStyles<Theme>(
+  createStyles((theme: Theme) => ({
+    iconButton: {
+      [theme.breakpoints.down("md")]: {
+        padding: 1,
+      },
+    },
+    icon: {
+      [theme.breakpoints.down("md")]: {
+        fontSize: "1rem",
+      },
+    },
+  }))
+);
 
 const ColoredIconButton = withStyles((theme: Theme) => ({
   root: {
@@ -110,15 +131,24 @@ export default function CardMenu({
     handleClose();
   };
 
+  const classes = useStyles();
+
   return (
     <div className={rest.className}>
-      <ColoredIconButton size="small" onClick={handleClick}>
-        <MoreVertIcon fontSize="small" />
+      <ColoredIconButton
+        className={classes.iconButton}
+        size="small"
+        onClick={handleClick}
+      >
+        <MoreVertIcon className={classes.icon} fontSize="small" />
       </ColoredIconButton>
       <Menu
         anchorEl={anchorEl}
         open={isOpen}
-        onClose={handleClose}
+        onClose={(e: any) => {
+          e.stopPropagation();
+          handleClose();
+        }}
         PaperProps={{
           style: {
             maxHeight: ITEM_HEIGHT * 4,
