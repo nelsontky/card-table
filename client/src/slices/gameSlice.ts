@@ -3,22 +3,26 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { Card, Section, SetGame, CrudGame } from "../interfaces";
 import { removeFromArray } from "../lib/utils";
 
-const initialState = [
-  {
-    deck: Array<Card>(),
-    hand: Array<Card>(),
-    play: Array<Card>(),
-  },
-  {
-    deck: Array<Card>(),
-    hand: Array<Card>(),
-    play: Array<Card>(),
-  },
-];
+type GameState = Array<{
+  deck: Array<Card>;
+  hand: Array<Card>;
+  play: Array<Card>;
+}>;
 
 export const slice = createSlice({
   name: "game",
-  initialState,
+  initialState: [
+    {
+      deck: Array<Card>(),
+      hand: Array<Card>(),
+      play: Array<Card>(),
+    },
+    {
+      deck: Array<Card>(),
+      hand: Array<Card>(),
+      play: Array<Card>(),
+    },
+  ] as GameState,
   reducers: {
     set: (state, action: PayloadAction<SetGame>) => {
       const { playerId, section, cards } = action.payload;

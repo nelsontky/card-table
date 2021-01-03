@@ -22,6 +22,15 @@ services:
     volumes:
       - ./client:/app
 
+  scrape:
+    image: node:current-buster
+    env_file:
+      - .env
+    working_dir: /app
+    volumes:
+      - ./scrape:/app
+    tty: true
+
   postgres:
     image: postgres:latest
     env_file:

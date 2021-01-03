@@ -94,12 +94,14 @@ export default function Home() {
         </Grid>
       </Grid>
       <Box className={classes.marginBottom}>
-        <Typography variant="h5">Your Decks</Typography>
+        <Typography variant="h5" gutterBottom>
+          Your Decks
+        </Typography>
       </Box>
       <Box className={classes.marginBottom}>
-        <Typography variant="h5">Games</Typography>
-        <Typography variant="h6">Your Games</Typography>
-        <Typography variant="h6">Available games</Typography>
+        <Typography gutterBottom variant="h5">
+          Games
+        </Typography>
       </Box>
       <Login />
     </Container>
