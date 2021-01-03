@@ -2,8 +2,9 @@ import React from "react";
 import StyledFirebaseAuth from "react-firebaseui/StyledFirebaseAuth";
 import firebase from "firebase";
 import { useDispatch, useSelector } from "react-redux";
+import { Button } from "@material-ui/core";
 
-import { login } from "../slices/userSlice";
+import { login, logout } from "../slices/userSlice";
 
 export default function Login() {
   const dispatch = useDispatch();
@@ -24,7 +25,7 @@ export default function Login() {
 
   // Configure FirebaseUI.
   const uiConfig = {
-    signInFlow: "popup",
+    signInFlow: "redirect",
     signInSuccessUrl: "/",
     signInOptions: [
       {
@@ -44,6 +45,15 @@ export default function Login() {
       <StyledFirebaseAuth uiConfig={uiConfig} firebaseAuth={firebase.auth()} />
     );
   } else {
-    return null;
+    return (
+      <Button
+        variant="contained"
+        onClick={() => {
+          dispatch(logout());
+        }}
+      >
+        Logout
+      </Button>
+    );
   }
 }
