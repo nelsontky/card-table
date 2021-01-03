@@ -1,6 +1,6 @@
 import React from "react";
 import { Theme, createStyles, makeStyles } from "@material-ui/core/styles";
-import { Grid, Box } from "@material-ui/core";
+import { Grid } from "@material-ui/core";
 import { useDispatch, useSelector } from "react-redux";
 import { useCardDimensions } from "../lib/hooks";
 import { useParams, useLocation } from "react-router-dom";

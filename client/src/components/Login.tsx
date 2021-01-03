@@ -19,7 +19,7 @@ export default function Login() {
       });
 
     return () => unregisterAuthObserver();
-  }, []);
+  }, [dispatch]);
 
   const user = useSelector((state: any) => state.user);
 
