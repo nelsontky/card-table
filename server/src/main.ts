@@ -1,10 +1,11 @@
-import { NestFactory } from '@nestjs/core';
-import { AppModule } from './app.module';
+import { NestFactory } from "@nestjs/core";
+import { AppModule } from "./app.module";
 
-import './lib/firebase';
+import "./lib/firebase";
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  await app.listen(5000);
+  app.setGlobalPrefix("api/v1");
+  await app.listen(5001);
 }
 bootstrap();

@@ -52,7 +52,7 @@ let startDownloading = false;
         const tags = [cardName, ...attributes, setName];
 
         const cardId = (
-          await axios.post("http://server:5000/cards", {
+          await axios.post("http://localhost:5000/api/v1/cards", {
             tags,
             createdBy: USER_ID,
           })
