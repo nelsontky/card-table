@@ -22,8 +22,8 @@ export class DecksController {
   }
 
   @Post("/by-name")
-  createByName(@Query("name") name) {
-    return this.decksService.createByName(name);
+  createByName(@Body() createDeckDto: CreateDeckDto) {
+    return this.decksService.createByName(createDeckDto);
   }
 
   @Get()

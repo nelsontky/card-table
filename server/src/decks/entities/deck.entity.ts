@@ -5,11 +5,10 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   Index,
-  ManyToMany,
-  JoinTable,
+  OneToMany,
 } from "typeorm";
 
-import { Card } from "../../cards/entities/card.entity";
+import { DeckCardQuantity } from "./deck-card-quantity.entity";
 
 @Entity()
 export class Deck {
@@ -20,9 +19,8 @@ export class Deck {
   @Column()
   name: string;
 
-  @ManyToMany(() => Card)
-  @JoinTable()
-  cards: Card[];
+  @OneToMany(() => DeckCardQuantity, (deckCardQuantity) => deckCardQuantity.deck)
+  cardQuantities: DeckCardQuantity[];
 
   @Column({ default: true })
   isShared: boolean;
