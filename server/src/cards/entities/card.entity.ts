@@ -13,6 +13,10 @@ export class Card {
   id: number;
 
   @Index()
+  @Column()
+  name: string;
+
+  @Index()
   @Column("text", { array: true })
   tags: Array<string>;
 
