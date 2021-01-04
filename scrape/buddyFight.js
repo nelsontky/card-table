@@ -7,11 +7,11 @@ const URL = "https://opentheflag.com/sets";
 // nelson@ccb.wtf user id
 const USER_ID = "8Bc95lVsDFOVRYhPeTWaMndKRZC2";
 
-const RESUME_POINT = "Drum’s Adventures";
+const RESUME_POINT = "Dragonic Force";
 
-let startDownloading = false;
+let startDownloading = true;
 
-(async () => {
+const main = async () => {
   const html = (await axios.get(URL)).data;
   const $ = cheerio.load(html);
 
@@ -45,33 +45,48 @@ let startDownloading = false;
           .text()
           .trim()
           .split("/\n");
-        const setName = $(
-          ".card-sets > ul:first-child > li:first-child > a",
-          cardPage
-        ).text();
-        const tags = [cardName, ...attributes, setName];
-
-        const cardId = (
-          await axios.post("http://localhost:5000/api/v1/cards", {
-            tags,
-            createdBy: USER_ID,
+        const setNames = $(".card-sets > ul:first-child > li > a", cardPage)
+          .map(function () {
+            return $(this).text();
           })
-        ).data;
+          .get();
+        const tags = [cardName, ...attributes, ...setNames];
 
-        const imageLink = $(".card-image > a", cardPage).attr("href");
-        const buffer = (
-          await axios.get(imageLink, { responseType: "arraybuffer" })
-        ).data;
-        fs.writeFileSync("./images/" + cardId + ".png", buffer);
+        // Update script
+        await axios.put(`http://localhost:5001/api/v1/cards`, {
+          name: cardName,
+          tags,
+        });
+
+        // const cardId = (
+        //   await axios.post("http://localhost:5001/api/v1/cards", {
+        //     tags,
+        //     createdBy: USER_ID,
+        //   })
+        // ).data;
+
+        // const imageLink = $(".card-image > a", cardPage).attr("href");
+        // const buffer = (
+        //   await axios.get(imageLink, { responseType: "arraybuffer" })
+        // ).data;
+        // fs.writeFileSync("./images/" + cardId + ".png", buffer);
       }
 
       setPage = (await axios.get(setPageLink + `?page=${++currPage}`)).data;
     }
   }
-})();
+};
 
-[
-  "Godly-speed Bal Dragon",
-  "Sun Dragon",
-  "Triple D Booster Pack Alternative Vol.1: Buddy Rave",
-];
+// main();
+
+async function createDecks() {
+  const html = (await axios.get(URL)).data;
+  const $ = cheerio.load(html);
+  const decks = $("#sets h2:nth-child(3) + div > .set").get();
+  for (const deck of decks) {
+    const deckName = $(deck).text().trim();
+    console.log(deckName);
+  }
+}
+
+createDecks();

@@ -5,6 +5,8 @@ import { AppController } from "./app.controller";
 import { AppService } from "./app.service";
 import { CardsModule } from "./cards/cards.module";
 import { Card } from "./cards/entities/card.entity";
+import { Deck } from "./decks/entities/deck.entity";
+import { DecksModule } from "./decks/decks.module";
 
 @Module({
   imports: [
@@ -15,10 +17,11 @@ import { Card } from "./cards/entities/card.entity";
       username: process.env.POSTGRES_USER,
       password: process.env.POSTGRES_PASSWORD,
       database: process.env.POSTGRES_USER,
-      entities: [Card],
+      entities: [Card, Deck],
       synchronize: process.env.NODE_ENV === "development",
     }),
     CardsModule,
+    DecksModule,
   ],
   controllers: [AppController],
   providers: [AppService],

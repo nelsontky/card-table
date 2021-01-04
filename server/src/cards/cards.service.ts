@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable, HttpException, HttpStatus } from "@nestjs/common";
 import { CreateCardDto } from "./dto/create-card.dto";
 import { UpdateCardDto } from "./dto/update-card.dto";
 import { Card } from "./entities/card.entity";
@@ -13,6 +13,10 @@ export class CardsService {
   ) {}
 
   async create(createCardDto: CreateCardDto) {
+    if (process.env.NODE_ENV !== "development") {
+      throw new HttpException("Forbidden", HttpStatus.FORBIDDEN);
+    }
+
     const newCard = this.cardsRepository.create({
       tags: createCardDto.tags,
       createdBy: createCardDto.createdBy,
@@ -30,8 +34,20 @@ export class CardsService {
     return `This action returns a #${id} card`;
   }
 
-  update(id: number, updateCardDto: UpdateCardDto) {
-    return `This action updates a #${id} card`;
+  async update(updateCardDto: UpdateCardDto) {
+    if (process.env.NODE_ENV !== "development") {
+      throw new HttpException("Forbidden", HttpStatus.FORBIDDEN);
+    }
+
+    const cardsToEdit = await this.cardsRepository.find({
+      where: { name: updateCardDto.name },
+    });
+    const saveCards = cardsToEdit.map((card) => {
+      card.tags = updateCardDto.tags;
+      return this.cardsRepository.save(card);
+    });
+
+    return await Promise.all(saveCards);
   }
 
   remove(id: number) {
