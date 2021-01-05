@@ -5,7 +5,10 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   Index,
+  OneToMany,
 } from "typeorm";
+
+import { CardTag } from "./card-tag.entity";
 
 @Entity()
 export class Card {
@@ -16,9 +19,10 @@ export class Card {
   @Column()
   name: string;
 
-  @Index()
-  @Column("text", { array: true })
-  tags: Array<string>;
+  @OneToMany(() => CardTag, (cardTag) => cardTag.card, {
+    cascade: true,
+  })
+  tags: CardTag[];
 
   @Column({ default: true })
   isShared: boolean;
