@@ -6,11 +6,13 @@ import {
   Put,
   Param,
   Delete,
+  Query,
 } from "@nestjs/common";
 import { DecksService } from "./decks.service";
 import { CreateDeckDto } from "./dto/create-deck.dto";
 import { CreateDeckByNameDto } from "./dto/create-deck-by-name.dto";
 import { UpdateDeckDto } from "./dto/update-deck.dto";
+import { off } from "process";
 
 @Controller("decks")
 export class DecksController {
@@ -27,13 +29,16 @@ export class DecksController {
   }
 
   @Get()
-  findAll() {
-    return this.decksService.findAll();
+  findAll(
+    @Query("limit") limit?: number,
+    @Query("offset") offset?: number,
+  ) {
+    return this.decksService.findAll(limit, offset);
   }
 
   @Get(":id")
   findOne(@Param("id") id: string) {
-    return this.decksService.findOne(+id);
+    return this.decksService.findOne(id);
   }
 
   @Put(":id")

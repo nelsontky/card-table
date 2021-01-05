@@ -13,15 +13,22 @@ export function removeFromArray(pred: (element: any) => boolean, arr: any[]) {
 
 export function createDeck({
   deckName,
+  deckCards,
   noShuffle,
   ownerId,
 }: {
-  deckName: string;
+  deckName?: string;
+  deckCards?: Array<any>;
   noShuffle?: boolean;
   ownerId: number;
 }) {
   const allDecks: any = decks;
-  const deck = allDecks[deckName].reduce((acc: any, curr: any) => {
+  const cardsToAdd = deckName
+    ? allDecks[deckName]
+    : deckCards
+    ? deckCards.map((card: any) => ({ ...card, ...card.card }))
+    : [];
+  const deck = cardsToAdd.reduce((acc: any, curr: any) => {
     const next = [...acc];
     for (let i = 0; i < curr.quantity; i++) {
       next.push({

@@ -4,22 +4,10 @@ import firebase from "firebase";
 import { useDispatch, useSelector } from "react-redux";
 import { Button } from "@material-ui/core";
 
-import { login, logout } from "../slices/userSlice";
+import { logout } from "../slices/userSlice";
 
 export default function Login() {
   const dispatch = useDispatch();
-
-  React.useEffect(() => {
-    const unregisterAuthObserver = firebase
-      .auth()
-      .onAuthStateChanged((user) => {
-        if (user) {
-          dispatch(login(user.uid));
-        }
-      });
-
-    return () => unregisterAuthObserver();
-  }, [dispatch]);
 
   const user = useSelector((state: any) => state.user);
 

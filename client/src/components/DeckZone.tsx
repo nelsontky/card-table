@@ -5,6 +5,7 @@ import { Button, Grid, Typography } from "@material-ui/core";
 import shuffle from "lodash/shuffle";
 import { useDrop } from "react-dnd";
 import clsx from "clsx";
+import useSwr from "swr";
 
 import { Card, CrudGame, Monitor } from "../interfaces";
 import CardComponent from "../components/CardComponent";
@@ -29,9 +30,11 @@ const useStyles = makeStyles<Theme, Monitor>((theme: Theme) =>
 
 export default function DeckZone({
   playerId,
+  deckId,
   ...rest
 }: {
   playerId: number;
+  deckId?: string;
   [x: string]: any;
 }) {
   const dispatch = useDispatch();
@@ -86,15 +89,22 @@ export default function DeckZone({
 
   const classes = useStyles({ canDrop, isOver, isMine });
 
+  const { data } = useSwr(deckId ? `/decks/${deckId}` : null);
+
   React.useEffect(() => {
     dispatch(
       set({
         playerId,
         section: "deck",
-        cards: createDeck({
-          deckName: myPlayerId === 0 ? "dragonicForce" : "ninjaOnslaught",
-          ownerId: playerId,
-        }),
+        cards: data === undefined
+          ? createDeck({
+              deckName: myPlayerId === 0 ? "dragonicForce" : "ninjaOnslaught",
+              ownerId: playerId,
+            })
+          : createDeck({
+              deckCards: data.cardQuantities,
+              ownerId: playerId,
+            }),
       })
     );
   }, [dispatch, playerId, myPlayerId]);

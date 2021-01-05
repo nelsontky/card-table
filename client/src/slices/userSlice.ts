@@ -1,4 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import axios from "axios";
 
 import firebase from "firebase";
 
@@ -11,6 +12,7 @@ export const slice = createSlice({
     },
     logout: () => {
       firebase.auth().signOut();
+      axios.defaults.headers["Authorization"] = undefined;
       window.location.href = "/";
       return false;
     },

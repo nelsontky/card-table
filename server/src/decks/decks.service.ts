@@ -5,11 +5,17 @@ import { UpdateDeckDto } from "./dto/update-deck.dto";
 import { Deck } from "./entities/deck.entity";
 import { DeckCardQuantity } from "./entities/deck-card-quantity.entity";
 import { Card } from "../cards/entities/card.entity";
-import { Connection } from "typeorm";
+import { Connection, Repository } from "typeorm";
+import { InjectRepository } from "@nestjs/typeorm";
 
 @Injectable()
 export class DecksService {
-  constructor(private connection: Connection) {}
+  constructor(
+    private connection: Connection,
+
+    @InjectRepository(Deck)
+    private decksRepository: Repository<Deck>,
+  ) {}
 
   create(createDeckDto: CreateDeckDto) {
     return "This action adds a new deck";
@@ -54,12 +60,25 @@ export class DecksService {
     }
   }
 
-  findAll() {
-    return `This action returns all decks`;
+  async findAll(limit?: number, offset?: number) {
+    return await this.decksRepository
+      .createQueryBuilder("deck")
+      .select(["deck.id", "deck.name", "cards", "card.id", "card.name"])
+      .leftJoin("deck.cardQuantities", "cards")
+      .leftJoin("cards.card", "card")
+      .take(limit)
+      .skip(offset)
+      .getMany();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} deck`;
+  async findOne(id: string) {
+    return await this.decksRepository
+      .createQueryBuilder("deck")
+      .select(["deck.id", "deck.name", "cards", "card.id", "card.name"])
+      .where("deck.id = :id", { id })
+      .leftJoin("deck.cardQuantities", "cards")
+      .leftJoin("cards.card", "card")
+      .getOne();
   }
 
   update(id: number, updateDeckDto: UpdateDeckDto) {

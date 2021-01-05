@@ -12,6 +12,8 @@ import { DndProvider } from "react-dnd";
 import store from "./store";
 import { Provider } from "react-redux";
 import { BrowserRouter as Router } from "react-router-dom";
+import { SWRConfig } from "swr";
+import axios from "axios";
 
 import "./lib/firebase";
 
@@ -22,17 +24,29 @@ let theme = createMuiTheme({
 });
 theme = responsiveFontSizes(theme);
 
+axios.defaults.baseURL = "/api/v1";
+
 ReactDOM.render(
   <React.StrictMode>
-    <ThemeProvider theme={theme}>
-      <DndProvider backend={TouchBackend} options={{ enableMouseEvents: true }}>
-        <Provider store={store}>
-          <Router>
-            <App />
-          </Router>
-        </Provider>
-      </DndProvider>
-    </ThemeProvider>
+    <SWRConfig
+      value={{
+        fetcher: (url) => axios.get(url).then((res) => res.data),
+        suspense: true,
+      }}
+    >
+      <ThemeProvider theme={theme}>
+        <DndProvider
+          backend={TouchBackend}
+          options={{ enableMouseEvents: true }}
+        >
+          <Provider store={store}>
+            <Router>
+              <App />
+            </Router>
+          </Provider>
+        </DndProvider>
+      </ThemeProvider>
+    </SWRConfig>
   </React.StrictMode>,
   document.getElementById("root")
 );

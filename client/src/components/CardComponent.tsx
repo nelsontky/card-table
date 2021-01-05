@@ -24,7 +24,7 @@ const useStyles = makeStyles<
       backgroundImage:
         card.isFaceDown || hide
           ? undefined
-          : `url(${process.env.PUBLIC_URL}/cards/${card.cardId}.png)`,
+          : `url(${process.env.REACT_APP_S3_HOST}${card.cardId}.png)`,
       backgroundSize: "cover",
       width,
       height,
@@ -37,7 +37,7 @@ const useStyles = makeStyles<
     dropPreview: ({ isDragging, clientOffset, width, height, card }) => ({
       backgroundImage: card.isFaceDown
         ? undefined
-        : `url(${process.env.PUBLIC_URL}/cards/${card.cardId}.png)`,
+        : `url(${process.env.REACT_APP_S3_HOST}${card.cardId}.png)`,
       backgroundSize: "cover",
       width,
       height,
@@ -103,7 +103,7 @@ export default function CardComponent({ card, ...rest }: ICardComponent) {
       >
         <img
           className={classes.view}
-          src={`${process.env.PUBLIC_URL}/cards/${card.cardId}.png`}
+          src={`${process.env.REACT_APP_S3_HOST}${card.cardId}.png`}
           alt={card.cardId}
         />
       </ClosableBackdrop>

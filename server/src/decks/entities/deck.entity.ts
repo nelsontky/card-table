@@ -19,7 +19,10 @@ export class Deck {
   @Column()
   name: string;
 
-  @OneToMany(() => DeckCardQuantity, (deckCardQuantity) => deckCardQuantity.deck)
+  @OneToMany(
+    () => DeckCardQuantity,
+    (deckCardQuantity) => deckCardQuantity.deck,
+  )
   cardQuantities: DeckCardQuantity[];
 
   @Column({ default: true })

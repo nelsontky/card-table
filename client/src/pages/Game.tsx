@@ -1,9 +1,10 @@
 import React from "react";
 import { Theme, createStyles, makeStyles } from "@material-ui/core/styles";
-import { Grid } from "@material-ui/core";
+import { Grid, LinearProgress } from "@material-ui/core";
 import { useDispatch, useSelector } from "react-redux";
 import { useCardDimensions } from "../lib/hooks";
 import { useParams, useLocation } from "react-router-dom";
+import qs from "qs";
 
 import DeckZone from "../components/DeckZone";
 import HandZone from "../components/HandZone";
@@ -31,9 +32,15 @@ function Game() {
   const { height } = useCardDimensions();
   const { height: heightSmall } = useCardDimensions("small");
   const classes = useStyles({ height, heightSmall });
-  const { id } = useParams<{ id: string }>();
+  let { id } = useParams<{ id: string }>();
+  id = id.split("?")[0];
   const location = useLocation<any>();
   const isHost = !!location.state?.isHost;
+
+  const obj = qs.parse(location.search, {
+    ignoreQueryPrefix: true,
+  });
+  const deckId = obj.deck as string;
 
   const dispatch = useDispatch();
 
@@ -70,35 +77,37 @@ function Game() {
   }
 
   return (
-    <Grid container className={classes.root} direction="column" spacing={1}>
-      <Grid container item wrap="wrap" spacing={1}>
-        <Grid xs={9} item>
-          <HandZone
-            size="small"
-            className={classes.handZone}
-            playerId={isHost ? 1 : 0}
-          />
+    <React.Suspense fallback={<LinearProgress />}>
+      <Grid container className={classes.root} direction="column" spacing={1}>
+        <Grid container item wrap="wrap" spacing={1}>
+          <Grid xs={9} item>
+            <HandZone
+              size="small"
+              className={classes.handZone}
+              playerId={isHost ? 1 : 0}
+            />
+          </Grid>
+          <Grid item xs={3}>
+            <DeckZone
+              size="small"
+              className={classes.handZone}
+              playerId={isHost ? 1 : 0}
+            />
+          </Grid>
         </Grid>
-        <Grid item xs={3}>
-          <DeckZone
-            size="small"
-            className={classes.handZone}
-            playerId={isHost ? 1 : 0}
-          />
+        <Grid className={classes.playZone} item>
+          <PlayZone playerId={playerId} className={classes.playZone} />
+        </Grid>
+        <Grid container item wrap="wrap" spacing={1}>
+          <Grid xs={9} item>
+            <HandZone className={classes.handZone} playerId={isHost ? 0 : 1} />
+          </Grid>
+          <Grid item xs={3}>
+            <DeckZone deckId={deckId} playerId={isHost ? 0 : 1} />
+          </Grid>
         </Grid>
       </Grid>
-      <Grid className={classes.playZone} item>
-        <PlayZone playerId={playerId} className={classes.playZone} />
-      </Grid>
-      <Grid container item wrap="wrap" spacing={1}>
-        <Grid xs={9} item>
-          <HandZone className={classes.handZone} playerId={isHost ? 0 : 1} />
-        </Grid>
-        <Grid item xs={3}>
-          <DeckZone playerId={isHost ? 0 : 1} />
-        </Grid>
-      </Grid>
-    </Grid>
+    </React.Suspense>
   );
 }
 
