@@ -166,4 +166,16 @@ async function createDecks() {
   }
 }
 
-createDecks();
+function deleteOldId() {
+  fs.readdir("./images_uuid", (err, files) => {
+    files.forEach((file) => {
+      if (file.length < 30) {
+        console.log(file);
+        fs.rmSync(`./images_uuid/${file}`);
+      }
+    });
+  });
+}
+
+deleteOldId();
+// createDecks();
