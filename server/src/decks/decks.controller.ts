@@ -6,10 +6,10 @@ import {
   Put,
   Param,
   Delete,
-  Query,
 } from "@nestjs/common";
 import { DecksService } from "./decks.service";
 import { CreateDeckDto } from "./dto/create-deck.dto";
+import { CreateDeckByNameDto } from "./dto/create-deck-by-name.dto";
 import { UpdateDeckDto } from "./dto/update-deck.dto";
 
 @Controller("decks")
@@ -22,8 +22,8 @@ export class DecksController {
   }
 
   @Post("/by-name")
-  createByName(@Body() createDeckDto: CreateDeckDto) {
-    return this.decksService.createByName(createDeckDto);
+  createByName(@Body() createDeckByNameDto: CreateDeckByNameDto) {
+    return this.decksService.createByName(createDeckByNameDto);
   }
 
   @Get()

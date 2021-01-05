@@ -12,8 +12,8 @@ import { DeckCardQuantity } from "./deck-card-quantity.entity";
 
 @Entity()
 export class Deck {
-  @PrimaryGeneratedColumn()
-  id: number;
+  @PrimaryGeneratedColumn("uuid")
+  id: string;
 
   @Index()
   @Column()

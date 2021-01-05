@@ -1,5 +1,6 @@
 import { Injectable, HttpException, HttpStatus } from "@nestjs/common";
 import { CreateDeckDto } from "./dto/create-deck.dto";
+import { CreateDeckByNameDto } from "./dto/create-deck-by-name.dto";
 import { UpdateDeckDto } from "./dto/update-deck.dto";
 import { Deck } from "./entities/deck.entity";
 import { DeckCardQuantity } from "./entities/deck-card-quantity.entity";
@@ -14,7 +15,7 @@ export class DecksService {
     return "This action adds a new deck";
   }
 
-  async createByName(createDeckDto: CreateDeckDto) {
+  async createByName(createDeckByNameDto: CreateDeckByNameDto) {
     if (process.env.NODE_ENV !== "development") {
       throw new HttpException("Forbidden", HttpStatus.FORBIDDEN);
     }
@@ -24,13 +25,13 @@ export class DecksService {
     await queryRunner.startTransaction();
     try {
       const newDeck = queryRunner.manager.create(Deck, {
-        name: createDeckDto.name,
-        createdBy: createDeckDto.createdBy,
+        name: createDeckByNameDto.name,
+        createdBy: createDeckByNameDto.createdBy,
       });
 
       await queryRunner.manager.save(newDeck);
 
-      for (const card of createDeckDto.cards) {
+      for (const card of createDeckByNameDto.cards) {
         const cardToAdd = await queryRunner.manager.findOne(Card, {
           where: { name: card.name },
         });

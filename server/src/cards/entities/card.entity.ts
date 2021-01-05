@@ -9,8 +9,8 @@ import {
 
 @Entity()
 export class Card {
-  @PrimaryGeneratedColumn()
-  id: number;
+  @PrimaryGeneratedColumn("uuid")
+  id: string;
 
   @Index()
   @Column()
