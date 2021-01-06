@@ -117,8 +117,7 @@ export default function BrowseDeck({
               key={"browse-deck" + i}
               item
               lg={4}
-              md={6}
-              xs={12}
+              xs={6}
               className={classes.cardContainer}
               container
               wrap="nowrap"
