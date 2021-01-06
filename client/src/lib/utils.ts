@@ -46,7 +46,8 @@ export function createDeck({
 }
 
 export function transformCoords(peerData: any) {
-  const { width, height, offsetTop, offsetLeft, card, ...rest } = peerData;
+  const { card, cardHeight, ...rest } = peerData;
+  const boundingRect: DOMRect = peerData.boundingRect;
 
   if (!card) {
     return peerData;
@@ -55,34 +56,31 @@ export function transformCoords(peerData: any) {
   const { x, y, angle } = card;
 
   const myPlayZone = document.getElementById("play-zone");
-  if (
-    !width ||
-    !height ||
-    !offsetTop ||
-    !offsetLeft ||
-    !x ||
-    !y ||
-    !myPlayZone
-  ) {
+  if (!x || !y || !myPlayZone || !boundingRect) {
     return peerData;
   }
+  const myBoundingRect = myPlayZone.getBoundingClientRect();
 
   // TODO account for more players in diff directions
-  const widthScale = width / myPlayZone.clientWidth;
-  const heightScale = height / myPlayZone.clientHeight;
-  const translateX = myPlayZone.offsetLeft - offsetLeft;
-  const translateY = myPlayZone.offsetTop - offsetTop;
+  const widthScale = boundingRect.width / myBoundingRect.width;
+  const heightScale = boundingRect.height / myBoundingRect.height;
+  const translateX = myBoundingRect.left - boundingRect.left;
+  const translateY = myBoundingRect.top - boundingRect.top;
 
   const newX = x / widthScale + translateX;
-  const transformedY =
-    myPlayZone.offsetTop + (y - offsetTop) / heightScale + translateY;
-  const newY =
-    -(transformedY - document.body.clientHeight / 2) +
-    document.body.clientHeight / 2 -
-    52.5; // TODO get height dynamically
+  let newY = y / heightScale + translateY;
+  newY = reflectX(newY, cardHeight);
 
   return {
     ...rest,
     card: { ...card, x: newX, y: newY, angle: angle + 180 },
   };
+}
+
+function reflectX(y: number, cardHeight?: number) {
+  const myPlayZone = document.getElementById("play-zone") as HTMLElement;
+  const myBoundingRect = myPlayZone.getBoundingClientRect();
+  const yMiddle = myBoundingRect.top + myBoundingRect.height / 2;
+
+  return -(y - yMiddle) + yMiddle - (cardHeight ? cardHeight : 0);
 }

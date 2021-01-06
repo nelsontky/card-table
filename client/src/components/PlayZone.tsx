@@ -8,6 +8,7 @@ import CardComponent from "./CardComponent";
 import { Card, Monitor, CrudGame } from "../interfaces";
 import { add, update, remove } from "../slices/gameSlice";
 import { conn } from "../lib/peer";
+import { useCardDimensions } from "../lib/hooks";
 
 const useStyles = makeStyles<Theme, Monitor>((theme: Theme) =>
   createStyles({
@@ -35,23 +36,7 @@ export default function PlayZone({
   });
   const dispatch = useDispatch();
 
-  const [dimensions, setDimensions] = React.useState({
-    height: -1,
-    width: -1,
-    offsetTop: -1,
-    offsetLeft: -1,
-  });
-  React.useEffect(() => {
-    const playZone = document.getElementById("play-zone");
-    if (playZone) {
-      setDimensions({
-        height: playZone.clientHeight,
-        width: playZone.clientWidth,
-        offsetTop: playZone.offsetTop,
-        offsetLeft: playZone.offsetLeft,
-      });
-    }
-  }, []);
+  const { height } = useCardDimensions();
 
   const [monitor, drop] = useDrop({
     accept: ["play", "hand", "deck"],
@@ -65,6 +50,10 @@ export default function PlayZone({
         card: { ...typeRemoved, x, y },
       } as CrudGame;
 
+      const boundingRect = document
+        .getElementById("play-zone")
+        ?.getBoundingClientRect();
+
       if (itemType === "hand" || itemType === "deck") {
         dispatch(add(payload));
 
@@ -73,7 +62,8 @@ export default function PlayZone({
             JSON.stringify({
               action: "add",
               ...payload,
-              ...dimensions,
+              boundingRect,
+              cardHeight: height,
             })
           );
         }
@@ -85,7 +75,8 @@ export default function PlayZone({
             JSON.stringify({
               action: "update",
               ...payload,
-              ...dimensions,
+              boundingRect,
+              cardHeight: height,
             })
           );
         }
