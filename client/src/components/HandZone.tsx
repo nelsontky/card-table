@@ -1,7 +1,7 @@
 import React from "react";
 import { Theme, createStyles, makeStyles } from "@material-ui/core/styles";
 import { useDrop } from "react-dnd";
-import { Grid, Typography } from "@material-ui/core";
+import { Grid } from "@material-ui/core";
 import { useDispatch, useSelector } from "react-redux";
 import clsx from "clsx";
 

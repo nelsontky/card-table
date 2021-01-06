@@ -16,7 +16,7 @@ import { useHistory } from "react-router-dom";
 
 import { Send as SendIcon } from "@material-ui/icons";
 
-import Login from "../components/Login";
+// import Login from "../components/Login";
 import Decks from "../components/Decks";
 
 const useStyles = makeStyles((theme: Theme) =>

@@ -74,7 +74,7 @@ function Game() {
           }
         : undefined,
     });
-  }, [dispatch, id, isHost]);
+  }, [dispatch, id, isHost, deckId]);
 
   const playerId = useSelector((state: any) => state.playerId);
 

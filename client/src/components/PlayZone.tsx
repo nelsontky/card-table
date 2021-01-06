@@ -3,7 +3,6 @@ import { Theme, createStyles, makeStyles } from "@material-ui/core/styles";
 import { useDrop, XYCoord } from "react-dnd";
 import { useDispatch, useSelector } from "react-redux";
 import clsx from "clsx";
-import { Typography } from "@material-ui/core";
 
 import CardComponent from "./CardComponent";
 import { Card, Monitor, CrudGame } from "../interfaces";

@@ -1,6 +1,5 @@
 import { GridList, GridListTile, GridListTileBar } from "@material-ui/core";
 import { Theme, createStyles, makeStyles } from "@material-ui/core/styles";
-import clsx from "clsx";
 
 import useSWR from "swr";
 
