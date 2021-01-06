@@ -51,7 +51,7 @@ export function transformCoords(peerData: any) {
   if (!card) {
     return peerData;
   }
-  
+
   const { x, y, angle } = card;
 
   const myPlayZone = document.getElementById("play-zone");
