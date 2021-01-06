@@ -20,6 +20,8 @@ export function initialize({
   onData?: (data: any) => void;
 }) {
   const isHost = !!roomId;
+
+  // TODO make host dynamic/come from .env
   peer = new Peer(roomId, {
     host: "cardtable.cf",
     secure: true,
@@ -162,40 +164,4 @@ function hostReady({
       conn = null;
     });
   }
-}
-
-export function getPeer(id?: string) {
-  if (!peer || id) {
-    peer = new Peer(id, {
-      host: "cardtable.cf",
-      secure: true,
-      port: 443,
-      path: "/myapp",
-    });
-  }
-
-  return peer;
-}
-
-export async function getConn(destId?: string) {
-  if (!conn) {
-    conn = await waitForConnection(destId);
-  }
-
-  return conn;
-}
-
-function waitForConnection(destId?: string): Promise<Peer.DataConnection> {
-  return new Promise((res, rej) => {
-    if (!destId) {
-      peer.on("connection", (conn) => {
-        res(conn);
-      });
-    } else {
-      const conn = peer.connect(destId);
-      conn.on("open", () => {
-        res(conn);
-      });
-    }
-  });
 }
