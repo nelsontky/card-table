@@ -8,7 +8,7 @@ import { Typography } from "@material-ui/core";
 import CardComponent from "./CardComponent";
 import { Card, Monitor, CrudGame } from "../interfaces";
 import { add, update, remove } from "../slices/gameSlice";
-import { getConn } from "../lib/peer";
+import { conn } from "../lib/peer";
 
 const useStyles = makeStyles<Theme, Monitor>((theme: Theme) =>
   createStyles({
@@ -45,7 +45,6 @@ export default function PlayZone({
   React.useEffect(() => {
     const playZone = document.getElementById("play-zone");
     if (playZone) {
-      console.log(playZone.clientWidth);
       setDimensions({
         height: playZone.clientHeight,
         width: playZone.clientWidth,
@@ -70,7 +69,7 @@ export default function PlayZone({
       if (itemType === "hand" || itemType === "deck") {
         dispatch(add(payload));
 
-        getConn().then((conn) => {
+        if (conn) {
           conn.send(
             JSON.stringify({
               action: "add",
@@ -78,11 +77,11 @@ export default function PlayZone({
               ...dimensions,
             })
           );
-        });
+        }
       } else {
         dispatch(update(payload));
 
-        getConn().then((conn) => {
+        if (conn) {
           conn.send(
             JSON.stringify({
               action: "update",
@@ -90,7 +89,7 @@ export default function PlayZone({
               ...dimensions,
             })
           );
-        });
+        }
       }
 
       return { type: "play" };
@@ -127,14 +126,14 @@ export default function PlayZone({
 
               dispatch(remove(payload));
 
-              getConn().then((conn) => {
+              if (conn) {
                 conn.send(
                   JSON.stringify({
                     action: "remove",
                     ...payload,
                   })
                 );
-              });
+              }
             }
           }}
           source="play"

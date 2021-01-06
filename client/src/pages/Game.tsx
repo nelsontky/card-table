@@ -5,13 +5,14 @@ import { useDispatch, useSelector } from "react-redux";
 import { useCardDimensions } from "../lib/hooks";
 import { useParams, useLocation } from "react-router-dom";
 import qs from "qs";
+import Peer from "peerjs";
 
 import DeckZone from "../components/DeckZone";
 import HandZone from "../components/HandZone";
 import PlayZone from "../components/PlayZone";
 import { set as setPlayerId } from "../slices/playerIdSlice";
 
-import { getPeer, getConn, handleData } from "../lib/peer";
+import { initialize, join } from "../lib/peer";
 
 const useStyles = makeStyles<Theme, { height: number; heightSmall: number }>(
   (theme: Theme) =>
@@ -44,49 +45,34 @@ function Game() {
   const [opponentDeckId, setOpponentDeckId] = React.useState<string>("");
 
   React.useEffect(() => {
-    const peer = isHost ? getPeer(id) : getPeer();
+    const onConnect = () => (_: Peer, conn: Peer.DataConnection) => {
+      dispatch(setPlayerId(isHost ? 0 : 1));
+      // Send deck id to peer
+      conn.send(
+        JSON.stringify({
+          action: "setDeck",
+          deckId,
+        })
+      );
+    };
 
-    peer.on("open", (peerId) => {
-      if (isHost) {
-        getConn().then((conn) => {
-          dispatch(setPlayerId(0));
-          conn.on("open", () => {
-            conn.send(
-              JSON.stringify({
-                action: "setDeck",
-                deckId,
-              })
-            );
-          });
-
-          conn.on("data", (data) => {
-            const dataObj = JSON.parse(data);
-            if (dataObj.action === "setDeck") {
-              setOpponentDeckId(dataObj.deckId);
-            } else {
-              handleData(data);
-            }
-          });
-        });
-      } else {
-        getConn(id).then((conn) => {
-          dispatch(setPlayerId(1));
-          conn.send(
-            JSON.stringify({
-              action: "setDeck",
-              deckId,
-            })
-          );
-          conn.on("data", (data) => {
-            const dataObj = JSON.parse(data);
-            if (dataObj.action === "setDeck") {
-              setOpponentDeckId(dataObj.deckId);
-            } else {
-              handleData(data);
-            }
-          });
-        });
+    const onData = (data: any) => {
+      // Set opponent deck id
+      const dataObj = JSON.parse(data);
+      if (dataObj.action === "setDeck") {
+        setOpponentDeckId(dataObj.deckId);
       }
+    };
+
+    initialize({
+      roomId: isHost ? id : undefined,
+      onConnect,
+      onData,
+      onOpen: !isHost
+        ? () => {
+            join({ roomId: id, onConnect, onData });
+          }
+        : undefined,
     });
   }, [dispatch, id, isHost]);
 

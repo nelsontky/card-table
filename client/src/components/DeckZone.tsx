@@ -12,7 +12,7 @@ import CardComponent from "../components/CardComponent";
 import { set, remove, add } from "../slices/gameSlice";
 import { createDeck } from "../lib/utils";
 import BrowseDeck from "./BrowseDeck";
-import { getConn } from "../lib/peer";
+import { conn } from "../lib/peer";
 
 const buttons = ["Shuffle", "Browse"];
 
@@ -71,14 +71,14 @@ export default function DeckZone({
 
       dispatch(add(payload));
 
-      getConn().then((conn) => {
+      if (conn) {
         conn.send(
           JSON.stringify({
             action: "add",
             ...payload,
           })
         );
-      });
+      }
       return { type: "deck" };
     },
     collect: (monitor) => ({

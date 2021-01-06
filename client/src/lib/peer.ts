@@ -7,14 +7,30 @@ import { transformCoords } from "./utils";
 export let peer: Peer;
 export let conn: Peer.DataConnection | null;
 
-export function initialize(id?: string) {
-  const isHost = !!id;
-
-  peer = new Peer(id, {
+export function initialize({
+  roomId,
+  onOpen,
+  onConnect,
+  onData,
+}: {
+  roomId?: string;
+  deckId?: string;
+  onOpen?: () => void;
+  onConnect?: () => (peer: Peer, conn: Peer.DataConnection) => void;
+  onData?: (data: any) => void;
+}) {
+  const isHost = !!roomId;
+  peer = new Peer(roomId, {
     host: "cardtable.cf",
     secure: true,
     port: 443,
     path: "/myapp",
+  });
+
+  peer.on("open", () => {
+    if (onOpen) {
+      onOpen();
+    }
   });
 
   peer.on("connection", (c) => {
@@ -38,10 +54,12 @@ export function initialize(id?: string) {
       return;
     }
 
-    conn = c;
-    console.log("Connected to: " + conn.peer);
+    if (isHost) {
+      conn = c;
+      console.log("Connected to: " + conn.peer);
 
-    hostReady();
+      hostReady({ onConnect, onData });
+    }
   });
 
   peer.on("disconnected", function () {
@@ -84,15 +102,32 @@ export function handleData(data: string) {
   }
 }
 
-export function join(id: string) {
+export function join({
+  roomId,
+  onConnect,
+  onData,
+}: {
+  roomId: string;
+  onConnect?: () => (peer: Peer, conn: Peer.DataConnection) => void;
+  onData?: (data: any) => void;
+}) {
   if (conn) {
     conn.close();
   }
 
-  conn = peer.connect(id);
+  conn = peer.connect(roomId);
+  conn.on("open", () => {
+    if (onConnect && conn) {
+      onConnect()(peer, conn);
+    }
+  });
 
   // Handle incoming data
   conn.on("data", (data) => {
+    if (onData) {
+      onData(data);
+    }
+
     handleData(data);
   });
 
@@ -101,9 +136,24 @@ export function join(id: string) {
   });
 }
 
-function hostReady() {
+function hostReady({
+  onConnect,
+  onData,
+}: {
+  onConnect?: () => (peer: Peer, conn: Peer.DataConnection) => void;
+  onData?: (data: any) => void;
+}) {
   if (conn) {
+    conn.on("open", () => {
+      if (onConnect && conn) {
+        onConnect()(peer, conn);
+      }
+    });
+
     conn.on("data", (data: any) => {
+      if (onData) {
+        onData(data);
+      }
       handleData(data);
     });
 

@@ -46,8 +46,12 @@ export function createDeck({
 }
 
 export function transformCoords(peerData: any) {
-  console.log(peerData);
   const { width, height, offsetTop, offsetLeft, card, ...rest } = peerData;
+
+  if (!card) {
+    return peerData;
+  }
+  
   const { x, y, angle } = card;
 
   const myPlayZone = document.getElementById("play-zone");

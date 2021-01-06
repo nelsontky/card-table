@@ -14,7 +14,7 @@ import {
 import CardComponent from "./CardComponent";
 import { Card, CrudGame } from "../interfaces";
 import { add, remove } from "../slices/gameSlice";
-import { getConn } from "../lib/peer";
+import { conn } from "../lib/peer";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -72,14 +72,15 @@ export default function BrowseDeck({
           section: "deck",
         } as CrudGame;
         dispatch(remove(removePayload));
-        getConn().then((conn) => {
+
+        if (conn) {
           conn.send(
             JSON.stringify({
               action: "remove",
               ...removePayload,
             })
           );
-        });
+        }
 
         const addPayload = {
           card: { ...cardToDraw, isFaceDown: false },
@@ -87,14 +88,15 @@ export default function BrowseDeck({
           section: "hand",
         } as CrudGame;
         dispatch(add(addPayload));
-        getConn().then((conn) => {
+
+        if (conn) {
           conn.send(
             JSON.stringify({
               action: "add",
               ...addPayload,
             })
           );
-        });
+        }
       }
     }
 

@@ -8,7 +8,7 @@ import clsx from "clsx";
 import CardComponent from "./CardComponent";
 import { Card, Monitor, IHandZone, CrudGame } from "../interfaces";
 import { add, remove } from "../slices/gameSlice";
-import { getConn } from "../lib/peer";
+import { conn } from "../lib/peer";
 
 const useStyles = makeStyles<Theme, Monitor>((theme: Theme) =>
   createStyles({
@@ -41,14 +41,14 @@ export default function HandZone({ playerId, size, ...rest }: IHandZone) {
 
       dispatch(add(payload));
 
-      getConn().then((conn) => {
+      if (conn) {
         conn.send(
           JSON.stringify({
             action: "add",
             ...payload,
           })
         );
-      });
+      }
       return { type: "hand" };
     },
     collect: (monitor) => ({
@@ -76,14 +76,14 @@ export default function HandZone({ playerId, size, ...rest }: IHandZone) {
               const payload = { playerId, section: "hand", card } as CrudGame;
               dispatch(remove(payload));
 
-              getConn().then((conn) => {
+              if (conn) {
                 conn.send(
                   JSON.stringify({
                     action: "remove",
                     ...payload,
                   })
                 );
-              });
+              }
             }}
             source="hand"
             card={card}

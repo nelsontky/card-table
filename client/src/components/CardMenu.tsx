@@ -12,7 +12,7 @@ import { useDispatch, useSelector } from "react-redux";
 
 import { ICardMenu } from "../interfaces";
 import { flip, rotate } from "../slices/gameSlice";
-import { getConn } from "../lib/peer";
+import { conn } from "../lib/peer";
 
 const options = ["Flip", "Rotate right", "Rotate 180°", "Rotate left"];
 
@@ -73,7 +73,7 @@ export default function CardMenu({
       case "Flip":
         dispatch(flip(playerId, card));
 
-        getConn().then((conn) => {
+        if (conn) {
           conn.send(
             JSON.stringify({
               action: "flip",
@@ -81,12 +81,12 @@ export default function CardMenu({
               playerId,
             })
           );
-        });
+        }
         break;
       case "Rotate right":
         dispatch(rotate(playerId, card, 90));
 
-        getConn().then((conn) => {
+        if (conn) {
           conn.send(
             JSON.stringify({
               action: "rotate",
@@ -95,12 +95,12 @@ export default function CardMenu({
               playerId,
             })
           );
-        });
+        }
         break;
       case "Rotate left":
         dispatch(rotate(playerId, card, -90));
 
-        getConn().then((conn) => {
+        if (conn) {
           conn.send(
             JSON.stringify({
               action: "rotate",
@@ -109,12 +109,12 @@ export default function CardMenu({
               playerId,
             })
           );
-        });
+        }
         break;
       case "Rotate 180°":
         dispatch(rotate(playerId, card, 180));
 
-        getConn().then((conn) => {
+        if (conn) {
           conn.send(
             JSON.stringify({
               action: "rotate",
@@ -123,7 +123,7 @@ export default function CardMenu({
               playerId,
             })
           );
-        });
+        }
         break;
       default:
       // TODO throw error
