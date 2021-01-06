@@ -71,7 +71,7 @@ export default function HandZone({ playerId, size, ...rest }: IHandZone) {
           <CardComponent
             hide={!isMine}
             size={size}
-            disableActions={playerId !== 0}
+            disableActions={!isMine}
             dropCb={() => {
               const payload = { playerId, section: "hand", card } as CrudGame;
               dispatch(remove(payload));
