@@ -44,14 +44,15 @@ export default function Home() {
     e.preventDefault();
 
     if (roomId !== "") {
-      history.push("/" + roomId);
+      history.push(`/${roomId}?deck=${selected}`);
     }
   };
 
   const startNewGame = () => {
     const peerId = Math.floor(Math.random() * 10000) + "";
     history.push({
-      pathname: `/${peerId}?deck=${selected}`,
+      pathname: `/${peerId}`,
+      search: `?deck=${selected}`,
       state: { isHost: true },
     });
   };

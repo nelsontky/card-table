@@ -32,17 +32,16 @@ function Game() {
   const { height } = useCardDimensions();
   const { height: heightSmall } = useCardDimensions("small");
   const classes = useStyles({ height, heightSmall });
-  let { id } = useParams<{ id: string }>();
-  id = id.split("?")[0];
+  const { id } = useParams<{ id: string }>();
   const location = useLocation<any>();
-  const isHost = !!location.state?.isHost;
 
-  const obj = qs.parse(location.search, {
-    ignoreQueryPrefix: true,
-  });
+  const isHost = !!location.state?.isHost;
+  const obj = qs.parse(location.search, { ignoreQueryPrefix: true });
   const deckId = obj.deck as string;
 
   const dispatch = useDispatch();
+
+  const [opponentDeckId, setOpponentDeckId] = React.useState<string>("");
 
   React.useEffect(() => {
     const peer = isHost ? getPeer(id) : getPeer();
@@ -51,15 +50,40 @@ function Game() {
       if (isHost) {
         getConn().then((conn) => {
           dispatch(setPlayerId(0));
+          conn.on("open", () => {
+            conn.send(
+              JSON.stringify({
+                action: "setDeck",
+                deckId,
+              })
+            );
+          });
+
           conn.on("data", (data) => {
-            handleData(data);
+            const dataObj = JSON.parse(data);
+            if (dataObj.action === "setDeck") {
+              setOpponentDeckId(dataObj.deckId);
+            } else {
+              handleData(data);
+            }
           });
         });
       } else {
         getConn(id).then((conn) => {
           dispatch(setPlayerId(1));
+          conn.send(
+            JSON.stringify({
+              action: "setDeck",
+              deckId,
+            })
+          );
           conn.on("data", (data) => {
-            handleData(data);
+            const dataObj = JSON.parse(data);
+            if (dataObj.action === "setDeck") {
+              setOpponentDeckId(dataObj.deckId);
+            } else {
+              handleData(data);
+            }
           });
         });
       }
@@ -68,7 +92,8 @@ function Game() {
 
   const playerId = useSelector((state: any) => state.playerId);
 
-  if (playerId === -1) {
+  const isOpponentDeckLoaded = opponentDeckId && opponentDeckId.length !== 0;
+  if (playerId === -1 || !isOpponentDeckLoaded) {
     return isHost ? (
       <h1>{`Ask a friend to join room "${id}"`}</h1>
     ) : (
@@ -77,37 +102,40 @@ function Game() {
   }
 
   return (
-    <React.Suspense fallback={<LinearProgress />}>
-      <Grid container className={classes.root} direction="column" spacing={1}>
-        <Grid container item wrap="wrap" spacing={1}>
-          <Grid xs={9} item>
-            <HandZone
-              size="small"
-              className={classes.handZone}
-              playerId={isHost ? 1 : 0}
-            />
-          </Grid>
-          <Grid item xs={3}>
+    <Grid container className={classes.root} direction="column" spacing={1}>
+      <Grid container item wrap="wrap" spacing={1}>
+        <Grid xs={9} item>
+          <HandZone
+            size="small"
+            className={classes.handZone}
+            playerId={isHost ? 1 : 0}
+          />
+        </Grid>
+        <Grid item xs={3}>
+          <React.Suspense fallback={<LinearProgress />}>
             <DeckZone
+              deckId={opponentDeckId}
               size="small"
               className={classes.handZone}
               playerId={isHost ? 1 : 0}
             />
-          </Grid>
-        </Grid>
-        <Grid className={classes.playZone} item>
-          <PlayZone playerId={playerId} className={classes.playZone} />
-        </Grid>
-        <Grid container item wrap="wrap" spacing={1}>
-          <Grid xs={9} item>
-            <HandZone className={classes.handZone} playerId={isHost ? 0 : 1} />
-          </Grid>
-          <Grid item xs={3}>
-            <DeckZone deckId={deckId} playerId={isHost ? 0 : 1} />
-          </Grid>
+          </React.Suspense>
         </Grid>
       </Grid>
-    </React.Suspense>
+      <Grid className={classes.playZone} item>
+        <PlayZone playerId={playerId} className={classes.playZone} />
+      </Grid>
+      <Grid container item wrap="wrap" spacing={1}>
+        <Grid xs={9} item>
+          <HandZone className={classes.handZone} playerId={isHost ? 0 : 1} />
+        </Grid>
+        <Grid item xs={3}>
+          <React.Suspense fallback={<LinearProgress />}>
+            <DeckZone deckId={deckId} playerId={isHost ? 0 : 1} />
+          </React.Suspense>
+        </Grid>
+      </Grid>
+    </Grid>
   );
 }
 

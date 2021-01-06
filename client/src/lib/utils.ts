@@ -46,6 +46,7 @@ export function createDeck({
 }
 
 export function transformCoords(peerData: any) {
+  console.log(peerData);
   const { width, height, offsetTop, offsetLeft, card, ...rest } = peerData;
   const { x, y, angle } = card;
 

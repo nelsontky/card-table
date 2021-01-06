@@ -63,7 +63,9 @@ export default function Decks({
                 setSelected(deck.id);
               }
             }}
-            className={selected && selected !== deck.id && classes.notSelected}
+            className={
+              selected && selected !== deck.id ? classes.notSelected : undefined
+            }
           >
             <img
               src={

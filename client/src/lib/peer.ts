@@ -44,6 +44,7 @@ function waitForConnection(destId?: string): Promise<Peer.DataConnection> {
 }
 
 export function handleData(data: string) {
+  console.log(data);
   const peerData = transformCoords(JSON.parse(data));
   const { action, ...actionRemoved } = peerData;
   switch (action) {

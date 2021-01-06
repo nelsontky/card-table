@@ -45,6 +45,7 @@ export default function PlayZone({
   React.useEffect(() => {
     const playZone = document.getElementById("play-zone");
     if (playZone) {
+      console.log(playZone.clientWidth);
       setDimensions({
         height: playZone.clientHeight,
         width: playZone.clientWidth,

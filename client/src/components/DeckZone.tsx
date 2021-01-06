@@ -96,15 +96,16 @@ export default function DeckZone({
       set({
         playerId,
         section: "deck",
-        cards: data === undefined
-          ? createDeck({
-              deckName: myPlayerId === 0 ? "dragonicForce" : "ninjaOnslaught",
-              ownerId: playerId,
-            })
-          : createDeck({
-              deckCards: data.cardQuantities,
-              ownerId: playerId,
-            }),
+        cards:
+          data === undefined
+            ? createDeck({
+                deckName: myPlayerId === 0 ? "dragonicForce" : "ninjaOnslaught",
+                ownerId: playerId,
+              })
+            : createDeck({
+                deckCards: data.cardQuantities,
+                ownerId: playerId,
+              }),
       })
     );
   }, [dispatch, playerId, myPlayerId]);
