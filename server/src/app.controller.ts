@@ -12,9 +12,9 @@ export class AppController {
     return this.appService.getHello();
   }
 
-  @Get("/auth")
-  @UseGuards(AuthGuard)
-  getAuth(@Req() request): string {
-    return "Auth route";
-  }
+  // @Get("/auth")
+  // @UseGuards(AuthGuard)
+  // getAuth(@Req() request): string {
+  //   return "Auth route";
+  // }
 }

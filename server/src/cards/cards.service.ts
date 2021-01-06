@@ -17,7 +17,7 @@ export class CardsService {
   }
 
   findAll() {
-    return this.cardsRepository.find({ relations: ["tags"] });
+    // return this.cardsRepository.find({ relations: ["tags"] });
     return `This action returns all cards`;
   }
 
