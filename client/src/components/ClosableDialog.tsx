@@ -8,7 +8,7 @@ import CloseIcon from "@material-ui/icons/Close";
 export interface IClosableDialog {
   isOpen: boolean;
   close: () => void;
-  children?: React.ReactChildren | React.ReactChild;
+  children?: React.ReactNode;
   DialogProps?: DialogProps;
   [x: string]: any;
 }
@@ -21,7 +21,7 @@ export default function ClosableDialog({
   ...rest
 }: IClosableDialog) {
   return (
-    <Dialog {...rest} {...DialogProps} open={isOpen}>
+    <Dialog onClose={close} {...rest} {...DialogProps} open={isOpen}>
       <DialogActions>
         <IconButton size="small" onClick={close}>
           <CloseIcon />

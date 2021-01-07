@@ -5,6 +5,7 @@ import { useSelector } from "react-redux";
 import { useHistory } from "react-router-dom";
 
 import { Size } from "../interfaces";
+import { RootState } from "../store";
 
 export function useCardDimensions(size?: Size) {
   const theme = useTheme();
@@ -31,8 +32,11 @@ export interface IUseUser {
   redirectIfFound: string;
 }
 
-export function useUser({ redirectTo, redirectIfFound }: IUseUser) {
-  const user = useSelector((state: any) => state.user);
+export function useUser(options?: IUseUser) {
+  const redirectTo = options?.redirectTo;
+  const redirectIfFound = options?.redirectIfFound;
+
+  const user = useSelector((state: RootState) => state.user);
   const hasUser = Boolean(user);
   const history = useHistory();
 

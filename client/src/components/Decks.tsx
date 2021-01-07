@@ -1,5 +1,11 @@
 import { GridList, GridListTile, GridListTileBar } from "@material-ui/core";
-import { Theme, createStyles, makeStyles } from "@material-ui/core/styles";
+import {
+  Theme,
+  createStyles,
+  makeStyles,
+  useTheme,
+} from "@material-ui/core/styles";
+import useMediaQuery from "@material-ui/core/useMediaQuery";
 
 import useSWR from "swr";
 
@@ -10,13 +16,9 @@ const useStyles = makeStyles((theme: Theme) =>
       flexWrap: "wrap",
       justifyContent: "space-around",
       overflow: "hidden",
-      backgroundColor: theme.palette.background.paper,
     },
     gridList: {
       cursor: "pointer",
-      flexWrap: "nowrap",
-      // Promote the list into his own layer on Chrome. This cost memory but helps keeping high FPS.
-      transform: "translateZ(0)",
     },
     notSelected: {
       opacity: 0.5,
@@ -41,6 +43,9 @@ export default function Decks({
   [a: string]: any;
 }) {
   const classes = useStyles();
+  const theme = useTheme();
+  const isSmall = useMediaQuery(theme.breakpoints.up("sm"));
+  const isMedium = useMediaQuery(theme.breakpoints.up("md"));
 
   const { data: decks } = useSWR("/decks");
 
@@ -49,7 +54,7 @@ export default function Decks({
       <GridList
         cellHeight={420}
         spacing={8}
-        cols={2.5}
+        cols={isMedium ? 3 : isSmall ? 2 : 1}
         className={classes.gridList}
       >
         {decks.map((deck: any) => (

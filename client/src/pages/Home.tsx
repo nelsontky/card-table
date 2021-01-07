@@ -3,26 +3,25 @@ import {
   Container,
   Grid,
   Typography,
-  TextField,
   Button,
-  IconButton,
-  InputAdornment,
   Box,
   LinearProgress,
-  Collapse,
 } from "@material-ui/core";
 import { Theme, createStyles, makeStyles } from "@material-ui/core/styles";
 import { useHistory } from "react-router-dom";
 
-import { Send as SendIcon } from "@material-ui/icons";
-
-// import Login from "../components/Login";
+import LoginDialog from "../components/LoginDialog";
 import Decks from "../components/Decks";
+import { useUser } from "../lib/hooks";
+import { logout } from "../slices/userSlice";
+import { useAppDispatch } from "../store";
+import HomeTabs from "../components/HomeTabs";
+import StartGame from "../components/StartGame";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
-      padding: theme.spacing(1),
+      padding: theme.spacing(2),
     },
     marginBottom: {
       marginBottom: theme.spacing(1),
@@ -34,83 +33,63 @@ export default function Home() {
   const classes = useStyles();
   const history = useHistory();
 
-  const [roomId, setRoomId] = React.useState<number | "">("");
-
-  const onSubmit = (
-    e:
-      | React.FormEvent<HTMLFormElement>
-      | React.MouseEvent<HTMLButtonElement, MouseEvent>
-  ) => {
-    e.preventDefault();
-
-    if (roomId !== "") {
-      history.push(`/${roomId}?deck=${selected}`);
-    }
-  };
-
-  const startNewGame = () => {
-    const peerId = Math.floor(Math.random() * 10000) + "";
-    history.push({
-      pathname: `/${peerId}`,
-      search: `?deck=${selected}`,
-      state: { isHost: true },
-    });
-  };
-
   const [selected, setSelected] = React.useState(null);
+  const [isLogin, setIsLogin] = React.useState(false);
+
+  const user = useUser();
+  const dispatch = useAppDispatch();
+  const signIn = () => {
+    setIsLogin(true);
+  };
+  const signOut = () => {
+    setIsLogin(false);
+    dispatch(logout());
+  };
+
+  const [tabIndex, setTabIndex] = React.useState(0);
 
   return (
-    <Container maxWidth="md" className={classes.root}>
-      <Box className={classes.marginBottom}>
-        <Typography variant="h5">Decks</Typography>
-        <Typography variant="caption" gutterBottom>
-          Click on a deck to start/join a game with the deck
-        </Typography>
-        <React.Suspense fallback={<LinearProgress />}>
-          <Decks selected={selected} setSelected={setSelected} />
-        </React.Suspense>
-      </Box>
-      <Collapse in={selected !== null}>
-        <Grid
-          container
-          direction="column"
-          spacing={2}
-          justify="center"
-          className={classes.marginBottom}
-        >
+    <>
+      <LoginDialog
+        isOpen={isLogin}
+        close={() => {
+          setIsLogin(false);
+        }}
+      />
+      <Container maxWidth="md" className={classes.root}>
+        <Grid container justify="flex-end">
           <Grid item>
-            <form noValidate autoComplete="off" onSubmit={onSubmit}>
-              <TextField
-                value={roomId}
-                onChange={(e) => {
-                  setRoomId(parseInt(e.target.value));
-                }}
-                label="Enter room id to join"
-                variant="outlined"
-                type="number"
-                InputProps={{
-                  endAdornment: (
-                    <InputAdornment position="end">
-                      <IconButton disabled={roomId === ""} onClick={onSubmit}>
-                        <SendIcon />
-                      </IconButton>
-                    </InputAdornment>
-                  ),
-                }}
-              />
-            </form>
-          </Grid>
-          <Grid item>
-            <Typography>Or</Typography>
-          </Grid>
-          <Grid item>
-            <Button variant="contained" color="primary" onClick={startNewGame}>
-              Start a new game
-            </Button>
+            {!user ? (
+              <Button onClick={signIn} color="primary" variant="contained">
+                Sign in/Sign up
+              </Button>
+            ) : (
+              <Button onClick={signOut} color="secondary" variant="contained">
+                Logout
+              </Button>
+            )}
           </Grid>
         </Grid>
-      </Collapse>
-      {/* <Login /> */}
-    </Container>
+        <HomeTabs
+          value={tabIndex}
+          setValue={setTabIndex}
+          TabsProps={{ centered: true }}
+          className={classes.marginBottom}
+        />
+        {tabIndex === 0 ? (
+          <Box className={classes.marginBottom}>
+            <Typography variant="h5">Decks</Typography>
+            <Typography variant="caption" gutterBottom>
+              Click on a deck to start/join a game with the deck
+            </Typography>
+            <React.Suspense fallback={<LinearProgress />}>
+              <Decks selected={selected} setSelected={setSelected} />
+            </React.Suspense>
+          </Box>
+        ) : (
+          <StartGame />
+        )}
+      </Container>
+    </>
   );
 }

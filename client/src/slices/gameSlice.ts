@@ -2,6 +2,7 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 import { Card, Section, SetGame, CrudGame } from "../interfaces";
 import { removeFromArray } from "../lib/utils";
+import { AppDispatch, RootState } from "../store";
 
 type GameState = Array<{
   deck: Array<Card>;
@@ -59,8 +60,8 @@ export const slice = createSlice({
 export const { add, remove, update, set } = slice.actions;
 
 export const flip = (playerId: number, card: Card) => (
-  dispatch: any,
-  getState: any
+  dispatch: AppDispatch,
+  getState: () => RootState
 ) => {
   const allCards = getState().game[playerId];
   const sections = Object.keys(allCards) as Section[];
@@ -85,8 +86,8 @@ export const flip = (playerId: number, card: Card) => (
 };
 
 export const rotate = (playerId: number, card: Card, angle: number) => (
-  dispatch: any,
-  getState: any
+  dispatch: AppDispatch,
+  getState: () => RootState
 ) => {
   const allCards = getState().game[playerId];
   const sections = Object.keys(allCards) as Section[];

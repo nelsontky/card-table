@@ -11,9 +11,14 @@ export const slice = createSlice({
       return action.payload;
     },
     logout: () => {
-      firebase.auth().signOut();
-      axios.defaults.headers["Authorization"] = undefined;
-      window.location.href = "/";
+      firebase
+        .auth()
+        .signOut()
+        .then(() => {
+          axios.defaults.headers["Authorization"] = undefined;
+          window.location.href = "/";
+        });
+
       return false;
     },
   },
