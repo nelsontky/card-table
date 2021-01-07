@@ -10,11 +10,18 @@ import { IconButton, Menu, MenuItem } from "@material-ui/core";
 import { MoreVert as MoreVertIcon } from "@material-ui/icons";
 import { useDispatch, useSelector } from "react-redux";
 
-import { ICardMenu } from "../interfaces";
-import { flip, rotate } from "../slices/gameSlice";
-import { conn } from "../lib/peer";
+import { Card } from "../../interfaces";
+import { flip, rotate } from "../../slices/gameSlice";
+import { conn } from "../../lib/peer";
 
 const options = ["Flip", "Rotate right", "Rotate 180°", "Rotate left"];
+
+export interface ICardMenu {
+  card: Card;
+  isOpen: boolean;
+  setIsOpen: (isOpen: boolean) => void;
+  [x: string]: any;
+}
 
 const ITEM_HEIGHT = 40;
 

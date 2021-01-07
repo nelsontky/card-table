@@ -6,9 +6,15 @@ import { useDispatch, useSelector } from "react-redux";
 import clsx from "clsx";
 
 import CardComponent from "./CardComponent";
-import { Card, Monitor, IHandZone, CrudGame } from "../interfaces";
-import { add, remove } from "../slices/gameSlice";
-import { conn } from "../lib/peer";
+import { Card, Monitor, CrudGame, Size } from "../../interfaces";
+import { add, remove } from "../../slices/gameSlice";
+import { conn } from "../../lib/peer";
+
+export interface IHandZone {
+  playerId: number;
+  size?: Size;
+  [x: string]: any;
+}
 
 const useStyles = makeStyles<Theme, Monitor>((theme: Theme) =>
   createStyles({

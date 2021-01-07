@@ -7,9 +7,9 @@ import { useParams, useLocation } from "react-router-dom";
 import qs from "qs";
 import Peer from "peerjs";
 
-import DeckZone from "../components/DeckZone";
-import HandZone from "../components/HandZone";
-import PlayZone from "../components/PlayZone";
+import DeckZone from "../components/game/DeckZone";
+import HandZone from "../components/game/HandZone";
+import PlayZone from "../components/game/PlayZone";
 import { set as setPlayerId } from "../slices/playerIdSlice";
 
 import { initialize, join } from "../lib/peer";

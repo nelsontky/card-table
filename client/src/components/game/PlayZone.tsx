@@ -5,10 +5,10 @@ import { useDispatch, useSelector } from "react-redux";
 import clsx from "clsx";
 
 import CardComponent from "./CardComponent";
-import { Card, Monitor, CrudGame } from "../interfaces";
-import { add, update, remove } from "../slices/gameSlice";
-import { conn } from "../lib/peer";
-import { useCardDimensions } from "../lib/hooks";
+import { Card, Monitor, CrudGame } from "../../interfaces";
+import { add, update, remove } from "../../slices/gameSlice";
+import { conn } from "../../lib/peer";
+import { useCardDimensions } from "../../lib/hooks";
 
 const useStyles = makeStyles<Theme, Monitor>((theme: Theme) =>
   createStyles({

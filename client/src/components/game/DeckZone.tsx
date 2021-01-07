@@ -7,12 +7,12 @@ import { useDrop } from "react-dnd";
 import clsx from "clsx";
 import useSwr from "swr";
 
-import { Card, CrudGame, Monitor } from "../interfaces";
-import CardComponent from "../components/CardComponent";
-import { set, remove, add } from "../slices/gameSlice";
-import { createDeck } from "../lib/utils";
+import { Card, CrudGame, Monitor } from "../../interfaces";
+import CardComponent from "./CardComponent";
+import { set, remove, add } from "../../slices/gameSlice";
+import { createDeck } from "../../lib/utils";
 import BrowseDeck from "./BrowseDeck";
-import { conn } from "../lib/peer";
+import { conn } from "../../lib/peer";
 
 const buttons = ["Shuffle", "Browse"];
 

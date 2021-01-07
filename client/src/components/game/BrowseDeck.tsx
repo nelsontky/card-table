@@ -12,9 +12,9 @@ import {
 } from "@material-ui/core";
 
 import CardComponent from "./CardComponent";
-import { Card, CrudGame } from "../interfaces";
-import { add, remove } from "../slices/gameSlice";
-import { conn } from "../lib/peer";
+import { Card, CrudGame } from "../../interfaces";
+import { add, remove } from "../../slices/gameSlice";
+import { conn } from "../../lib/peer";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({

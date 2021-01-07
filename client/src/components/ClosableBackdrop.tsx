@@ -1,10 +1,16 @@
 import React from "react";
-import { Backdrop, IconButton, Grid } from "@material-ui/core";
+import { Backdrop, IconButton, Grid, BackdropProps } from "@material-ui/core";
 import { makeStyles, createStyles, Theme } from "@material-ui/core/styles";
 
 import { Close as CloseIcon } from "@material-ui/icons";
 
-import { IClosableBackdrop } from "../interfaces";
+export interface IClosableBackdrop {
+  isOpen: boolean;
+  close: () => void;
+  children: React.ReactChild | React.ReactChildren;
+  BackdropProps?: BackdropProps;
+  [x: string]: any;
+}
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -19,6 +25,7 @@ export default function ClosableBackdrop({
   isOpen,
   close,
   children,
+  BackdropProps,
   ...rest
 }: IClosableBackdrop) {
   const classes = useStyles();
@@ -30,6 +37,7 @@ export default function ClosableBackdrop({
         open={isOpen}
         onClick={close}
         {...rest}
+        {...BackdropProps}
       >
         <Grid container justify="center">
           <Grid item>{children}</Grid>

@@ -2,13 +2,23 @@ import React from "react";
 import { Paper } from "@material-ui/core";
 import { Theme, createStyles, makeStyles } from "@material-ui/core/styles";
 import clsx from "clsx";
-import { useDrag, XYCoord } from "react-dnd";
+import { useDrag, XYCoord, DragSourceMonitor } from "react-dnd";
 
 import CardMenu from "./CardMenu";
-import { ICardComponent } from "../interfaces";
+import { Card, Section, Size, DragItem } from "../../interfaces";
 import { useSelector } from "react-redux";
-import { useCardDimensions } from "../lib/hooks";
-import ClosableBackdrop from "./ClosableBackdrop";
+import { useCardDimensions } from "../../lib/hooks";
+import ClosableBackdrop from "../ClosableBackdrop";
+
+export interface ICardComponent {
+  card: Card;
+  source: Section;
+  dropCb?: (element: DragItem, monitor: DragSourceMonitor) => void;
+  disableActions?: boolean;
+  noDrag?: boolean;
+  size?: Size;
+  [x: string]: any;
+}
 
 const useStyles = makeStyles<
   Theme,
