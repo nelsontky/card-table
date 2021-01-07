@@ -110,7 +110,7 @@ export default function CardComponent({ card, ...rest }: ICardComponent) {
       <Paper className={classes.dropPreview} />
       <Paper
         onClick={() => {
-          if (!card.isFaceDown) {
+          if (!card.isFaceDown && !rest.hide) {
             setIsView(true);
           }
         }}
