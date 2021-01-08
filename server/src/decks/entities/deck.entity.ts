@@ -22,6 +22,7 @@ export class Deck {
   @OneToMany(
     () => DeckCardQuantity,
     (deckCardQuantity) => deckCardQuantity.deck,
+    { onDelete: "CASCADE" },
   )
   cardQuantities: DeckCardQuantity[];
 

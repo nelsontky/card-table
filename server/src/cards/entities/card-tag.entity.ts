@@ -1,9 +1,10 @@
-import { Entity, Column, ManyToOne, PrimaryColumn, Index } from "typeorm";
+import { Entity, Column, ManyToOne, Index } from "typeorm";
 
 import { Card } from "./card.entity";
 
 @Entity()
 export class CardTag {
+  @Index()
   @Column({ primary: true })
   tag: string;
 

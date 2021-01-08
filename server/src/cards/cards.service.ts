@@ -3,7 +3,7 @@ import { CreateCardDto } from "./dto/create-card.dto";
 import { UpdateCardDto } from "./dto/update-card.dto";
 import { Card } from "./entities/card.entity";
 import { InjectRepository } from "@nestjs/typeorm";
-import { Repository } from "typeorm";
+import { Repository, ILike } from "typeorm";
 
 @Injectable()
 export class CardsService {
@@ -23,6 +23,15 @@ export class CardsService {
 
   findOne(id: number) {
     return `This action returns a #${id} card`;
+  }
+
+  async search(query: string) {
+    return await this.cardsRepository
+      .createQueryBuilder("card")
+      .where("card.name ILIKE :query", { query: `%${query}%` })
+      .orWhere("tag ILIKE :query", { query: `%${query}%` })
+      .leftJoin("card.tags", "tag")
+      .getMany();
   }
 
   async update(updateCardDto: UpdateCardDto) {

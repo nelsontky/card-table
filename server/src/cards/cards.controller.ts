@@ -6,12 +6,16 @@ import {
   Put,
   Param,
   Delete,
+  UseGuards,
+  Query,
 } from "@nestjs/common";
+import { AuthGuard } from "src/common/guards/auth.guard";
 import { CardsService } from "./cards.service";
 import { CreateCardDto } from "./dto/create-card.dto";
 import { UpdateCardDto } from "./dto/update-card.dto";
 
 @Controller("cards")
+@UseGuards(AuthGuard)
 export class CardsController {
   constructor(private readonly cardsService: CardsService) {}
 
@@ -23,6 +27,11 @@ export class CardsController {
   @Get()
   findAll() {
     return this.cardsService.findAll();
+  }
+
+  @Get("search")
+  async search(@Query("query") query: string) {
+    return await this.cardsService.search(query);
   }
 
   @Get(":id")
