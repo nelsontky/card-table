@@ -78,13 +78,14 @@ export default function Home() {
         />
         {tabIndex === 0 ? (
           <Box className={classes.marginBottom}>
-            <Typography variant="h5">Decks</Typography>
-            <Typography variant="caption" gutterBottom>
-              Click on a deck to start/join a game with the deck
+            <Typography variant="h4" gutterBottom>
+              Decks
             </Typography>
-            <React.Suspense fallback={<LinearProgress />}>
-              <Decks selected={selected} setSelected={setSelected} />
-            </React.Suspense>
+            <Decks
+              openLogin={() => {
+                setIsLogin(true);
+              }}
+            />
           </Box>
         ) : (
           <StartGame />

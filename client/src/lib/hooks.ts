@@ -29,7 +29,7 @@ export function useCardDimensions(size?: Size) {
 
 export interface IUseUser {
   redirectTo?: string;
-  redirectIfFound: string;
+  redirectIfFound?: string;
 }
 
 export function useUser(options?: IUseUser) {

@@ -5,7 +5,7 @@ import firebase from "firebase";
 
 export const slice = createSlice({
   name: "user",
-  initialState: false as string | boolean,
+  initialState: false as string | false,
   reducers: {
     login: (_, action: PayloadAction<string>) => {
       return action.payload;
@@ -19,7 +19,7 @@ export const slice = createSlice({
           window.location.href = "/";
         });
 
-      return false;
+      return false as false;
     },
   },
 });

@@ -8,6 +8,7 @@ import axios from "axios";
 import Home from "./pages/Home";
 import Game from "./pages/Game";
 import { login } from "./slices/userSlice";
+import Create from "./pages/decks/Create";
 
 function App() {
   const dispatch = useDispatch();
@@ -17,9 +18,10 @@ function App() {
       .auth()
       .onAuthStateChanged((user) => {
         if (user) {
-          user.getIdToken().then((idToken) => {
+          axios.interceptors.request.use(async (config) => {
+            const idToken = await user.getIdToken();
             console.log(idToken);
-            axios.defaults.headers["Authorization"] = idToken;
+            return { ...config, headers: { Authorization: idToken } };
           });
 
           dispatch(login(user.uid));
@@ -33,6 +35,9 @@ function App() {
     <>
       <CssBaseline />
       <Switch>
+        <Route path="/decks/create">
+          <Create />
+        </Route>
         <Route path="/:id">
           <Game />
         </Route>

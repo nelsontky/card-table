@@ -26,11 +26,16 @@ export class CardsService {
   }
 
   async search(query: string) {
+    if (query.trim().length < 3) {
+      return [];
+    }
+
     return await this.cardsRepository
       .createQueryBuilder("card")
       .where("card.name ILIKE :query", { query: `%${query}%` })
       .orWhere("tag ILIKE :query", { query: `%${query}%` })
       .leftJoin("card.tags", "tag")
+      .orderBy("card.name")
       .getMany();
   }
 

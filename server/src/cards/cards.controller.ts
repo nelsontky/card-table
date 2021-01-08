@@ -30,8 +30,8 @@ export class CardsController {
   }
 
   @Get("search")
-  async search(@Query("query") query: string) {
-    return await this.cardsService.search(query);
+  search(@Query("query") query: string) {
+    return this.cardsService.search(query);
   }
 
   @Get(":id")

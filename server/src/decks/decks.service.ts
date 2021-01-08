@@ -99,12 +99,44 @@ export class DecksService {
     }
   }
 
-  async findAll(limit?: number, offset?: number) {
+  async findShared(limit?: number, offset?: number) {
     return await this.decksRepository
       .createQueryBuilder("deck")
-      .select(["deck.id", "deck.name", "cards", "card.id", "card.name"])
+      .select([
+        "deck.id",
+        "deck.name",
+        "deck.createdAt",
+        "deck.updatedAt",
+        "deck.createdBy",
+        "cards",
+        "card.id",
+        "card.name",
+      ])
       .leftJoin("deck.cardQuantities", "cards")
       .leftJoin("cards.card", "card")
+      .where("deck.isShared")
+      .orderBy("deck.createdAt")
+      .take(limit)
+      .skip(offset)
+      .getMany();
+  }
+
+  async findMine(user: string, limit?: number, offset?: number) {
+    return await this.decksRepository
+      .createQueryBuilder("deck")
+      .select([
+        "deck.id",
+        "deck.name",
+        "deck.createdAt",
+        "deck.updatedAt",
+        "cards",
+        "card.id",
+        "card.name",
+      ])
+      .leftJoin("deck.cardQuantities", "cards")
+      .leftJoin("cards.card", "card")
+      .where("deck.createdBy = :user", { user })
+      .orderBy("deck.createdAt")
       .take(limit)
       .skip(offset)
       .getMany();
