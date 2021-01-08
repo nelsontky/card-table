@@ -25,7 +25,7 @@ export class Deck {
   )
   cardQuantities: DeckCardQuantity[];
 
-  @Column({ default: true })
+  @Column({ default: false })
   isShared: boolean;
 
   @Index()

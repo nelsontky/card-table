@@ -20,11 +20,11 @@ export class Card {
   name: string;
 
   @OneToMany(() => CardTag, (cardTag) => cardTag.card, {
-    cascade: true,
+    onDelete: "CASCADE",
   })
   tags: CardTag[];
 
-  @Column({ default: true })
+  @Column({ default: false })
   isShared: boolean;
 
   @Index()

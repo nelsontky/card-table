@@ -15,10 +15,49 @@ export class DecksService {
 
     @InjectRepository(Deck)
     private decksRepository: Repository<Deck>,
+
+    @InjectRepository(Card)
+    private cardsRepository: Repository<Card>,
   ) {}
 
-  create(createDeckDto: CreateDeckDto) {
-    return "This action adds a new deck";
+  async create(createDeckDto: CreateDeckDto) {
+    const queryRunner = this.connection.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+    try {
+      const newDeckCardQuantitiesPromise = createDeckDto.cards.map(
+        async (card) =>
+          queryRunner.manager.create(DeckCardQuantity, {
+            card: await this.cardsRepository.findOne(card.id),
+            quantity: card.quantity,
+          }),
+      );
+      const newDeckCardQuantities = await Promise.all(
+        newDeckCardQuantitiesPromise,
+      );
+      await queryRunner.manager.save(newDeckCardQuantities);
+
+      const newDeck = queryRunner.manager.create(Deck, {
+        name: createDeckDto.name,
+        createdBy: createDeckDto.createdBy,
+        cardQuantities: newDeckCardQuantities,
+      });
+      await queryRunner.manager.save(newDeck);
+
+      await queryRunner.commitTransaction();
+      return newDeck;
+    } catch (err) {
+      // since we have errors lets rollback the changes we made
+      await queryRunner.rollbackTransaction();
+    } finally {
+      // you need to release a queryRunner which was manually instantiated
+      await queryRunner.release();
+    }
+
+    throw new HttpException(
+      "Internal server error",
+      HttpStatus.INTERNAL_SERVER_ERROR,
+    );
   }
 
   async createByName(createDeckByNameDto: CreateDeckByNameDto) {

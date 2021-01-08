@@ -52,7 +52,7 @@ export function useUser(options?: IUseUser) {
     ) {
       history.push(redirectTo);
     }
-  }, [redirectTo, redirectIfFound, hasUser]);
+  }, [redirectTo, redirectIfFound, hasUser, history]);
 
   return user;
 }

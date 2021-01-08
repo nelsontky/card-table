@@ -7,18 +7,20 @@ import {
   Param,
   Delete,
   Query,
+  UseGuards,
 } from "@nestjs/common";
 import { DecksService } from "./decks.service";
 import { CreateDeckDto } from "./dto/create-deck.dto";
 import { CreateDeckByNameDto } from "./dto/create-deck-by-name.dto";
 import { UpdateDeckDto } from "./dto/update-deck.dto";
-import { off } from "process";
+import { AuthGuard } from "../common/guards/auth.guard";
 
 @Controller("decks")
 export class DecksController {
   constructor(private readonly decksService: DecksService) {}
 
   @Post()
+  @UseGuards(AuthGuard)
   create(@Body() createDeckDto: CreateDeckDto) {
     return this.decksService.create(createDeckDto);
   }
@@ -29,10 +31,7 @@ export class DecksController {
   }
 
   @Get()
-  findAll(
-    @Query("limit") limit?: number,
-    @Query("offset") offset?: number,
-  ) {
+  findAll(@Query("limit") limit?: number, @Query("offset") offset?: number) {
     return this.decksService.findAll(limit, offset);
   }
 

@@ -5,7 +5,7 @@ import * as admin from "firebase-admin";
 export class AuthGuard implements CanActivate {
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest();
-    const idToken = request.query.idToken;
+    const idToken = request.headers.authorization;
     try {
       const decodedToken = await admin.auth().verifyIdToken(idToken);
       request.user = decodedToken.uid;

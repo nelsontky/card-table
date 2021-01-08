@@ -18,9 +18,10 @@ function App() {
       .onAuthStateChanged((user) => {
         if (user) {
           user.getIdToken().then((idToken) => {
+            console.log(idToken);
             axios.defaults.headers["Authorization"] = idToken;
           });
-          
+
           dispatch(login(user.uid));
         }
       });
