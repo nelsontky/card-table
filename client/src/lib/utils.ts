@@ -46,7 +46,7 @@ export function createDeck({
 }
 
 export function transformCoords(peerData: any) {
-  const { card, cardHeight, ...rest } = peerData;
+  const { card, cardHeight, cardWidth, ...rest } = peerData;
   const boundingRect: DOMRect = peerData.boundingRect;
 
   if (!card) {
@@ -67,7 +67,9 @@ export function transformCoords(peerData: any) {
   const translateX = myBoundingRect.left - boundingRect.left;
   const translateY = myBoundingRect.top - boundingRect.top;
 
-  const newX = x / widthScale + translateX;
+  let newX = x / widthScale + translateX;
+  newX = reflectY(newX, cardWidth);
+
   let newY = y / heightScale + translateY;
   newY = reflectX(newY, cardHeight);
 
@@ -83,4 +85,12 @@ function reflectX(y: number, cardHeight?: number) {
   const yMiddle = myBoundingRect.top + myBoundingRect.height / 2;
 
   return -(y - yMiddle) + yMiddle - (cardHeight ? cardHeight : 0);
+}
+
+function reflectY(x: number, cardWidth?: number) {
+  const myPlayZone = document.getElementById("play-zone") as HTMLElement;
+  const myBoundingRect = myPlayZone.getBoundingClientRect();
+  const xMiddle = myBoundingRect.left + myBoundingRect.width / 2;
+
+  return -(x - xMiddle) + xMiddle - (cardWidth ? cardWidth : 0);
 }
