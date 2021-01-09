@@ -36,7 +36,7 @@ export default function PlayZone({
   });
   const dispatch = useDispatch();
 
-  const { height } = useCardDimensions();
+  const { height, width } = useCardDimensions();
 
   const [monitor, drop] = useDrop({
     accept: ["play", "hand", "deck"],
@@ -64,6 +64,7 @@ export default function PlayZone({
               ...payload,
               boundingRect,
               cardHeight: height,
+              cardWidth: width,
             })
           );
         }
@@ -77,6 +78,7 @@ export default function PlayZone({
               ...payload,
               boundingRect,
               cardHeight: height,
+              cardWidth: width,
             })
           );
         }
