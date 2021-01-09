@@ -124,7 +124,8 @@ function ListDecks({ endpoint }: { endpoint: string }) {
       <GridList
         cellHeight={160}
         spacing={8}
-        cols={isMedium ? 3 : isSmall ? 2 : 1}
+        // TODO fix number of cols
+        cols={decks.length < 3 ? decks.length : isMedium ? 3 : isSmall ? 2 : 1}
       >
         {decks.map((deck: any) => (
           <GridListTile key={deck.id} className={classes.tile}>

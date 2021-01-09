@@ -25,6 +25,7 @@ import clsx from "clsx";
 import axios from "axios";
 
 import { useUser } from "../../lib/hooks";
+import { useHistory } from "react-router-dom";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -72,6 +73,7 @@ const useStyles = makeStyles((theme: Theme) =>
 
 export default function ManageDecks() {
   const classes = useStyles();
+  const history = useHistory();
 
   const [search, setSearch] = React.useState("");
   const [selected, setSelected] = React.useState<{ [id: string]: any }>({});
@@ -104,7 +106,10 @@ export default function ManageDecks() {
     }));
     try {
       await axios.post("/decks", { name, cards });
-    } catch (err) {}
+      history.push("/");
+    } catch (err) {
+      setErrors(err.response.data);
+    }
   };
 
   return (

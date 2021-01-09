@@ -137,6 +137,7 @@ export class DecksService {
         "deck.name",
         "deck.createdAt",
         "deck.updatedAt",
+        "deck.createdBy",
         "cards",
         "card.id",
         "card.name",
@@ -153,7 +154,16 @@ export class DecksService {
   async findOne(id: string) {
     return await this.decksRepository
       .createQueryBuilder("deck")
-      .select(["deck.id", "deck.name", "cards", "card.id", "card.name"])
+      .select([
+        "deck.id",
+        "deck.name",
+        "deck.createdAt",
+        "deck.updatedAt",
+        "deck.createdBy",
+        "cards",
+        "card.id",
+        "card.name",
+      ])
       .where("deck.id = :id", { id })
       .leftJoin("deck.cardQuantities", "cards")
       .leftJoin("cards.card", "card")
