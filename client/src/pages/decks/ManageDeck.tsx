@@ -25,7 +25,9 @@ import clsx from "clsx";
 import axios from "axios";
 
 import { useUser } from "../../lib/hooks";
-import { useHistory } from "react-router-dom";
+import { useHistory, useParams } from "react-router-dom";
+
+import LoadingBackdrop from "../../components/LoadingBackdrop";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -71,7 +73,21 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 );
 
-export default function ManageDecks() {
+export default function ManageDeckWrapper() {
+  return (
+    <React.Suspense fallback={<LoadingBackdrop />}>
+      <ManageDeck />
+    </React.Suspense>
+  );
+}
+
+function ManageDeck() {
+  const user = useUser();
+  const { id: deckId } = useParams<any>();
+  const { data } = useSWR(deckId ? `/decks/${deckId}` : null);
+  const isEdit = !!data;
+  const canEdit = !data || data.createdBy === user;
+
   const classes = useStyles();
   const history = useHistory();
 
@@ -81,6 +97,22 @@ export default function ManageDecks() {
   const [clicked, setClicked] = React.useState<string | null>(null);
   const [errors, setErrors] = React.useState<{ [x: string]: string }>({});
 
+  React.useEffect(() => {
+    if (data) {
+      let selected: any = {};
+      for (const card of data.cardQuantities) {
+        selected[card.card.id] = {
+          quantity: card.quantity,
+          name: card.card.name,
+        };
+      }
+      setSelected(selected);
+
+      setName(data.name);
+    }
+  }, [data]);
+
+  const [isLoading, setIsLoading] = React.useState(false);
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const isEmpty = Object.keys(selected).length === 0;
@@ -105,76 +137,91 @@ export default function ManageDecks() {
       quantity: selected[id].quantity,
     }));
     try {
-      await axios.post("/decks", { name, cards });
+      setIsLoading(true);
+      if (isEdit) {
+        await axios.put(`/decks/${data.id}`, { name, cards });
+      } else {
+        await axios.post("/decks", { name, cards });
+      }
       history.push("/");
     } catch (err) {
+      setIsLoading(false);
       setErrors(err.response.data);
     }
   };
 
   return (
-    <Container fixed className={classes.root}>
-      <Grid container spacing={1}>
-        <Grid className={classes.searchArea} item xs={12} md={4}>
-          <SearchBar onSearch={setSearch} />
-          <React.Suspense
-            fallback={
-              <Box textAlign="center" marginTop={2}>
-                <CircularProgress />
-              </Box>
-            }
-          >
-            <SearchResults
+    <>
+      {isLoading && <LoadingBackdrop />}
+      <Container fixed className={classes.root}>
+        <Grid container spacing={1}>
+          {canEdit && (
+            <Grid className={classes.searchArea} item xs={12} md={4}>
+              <SearchBar onSearch={setSearch} />
+              <React.Suspense
+                fallback={
+                  <Box textAlign="center" marginTop={2}>
+                    <CircularProgress />
+                  </Box>
+                }
+              >
+                <SearchResults
+                  setClicked={setClicked}
+                  query={search}
+                  selected={selected}
+                  setSelected={setSelected}
+                  setErrors={setErrors}
+                />
+              </React.Suspense>
+            </Grid>
+          )}
+          <Grid item xs={12} md={5}>
+            <Selected
+              canEdit={canEdit}
               setClicked={setClicked}
-              query={search}
-              selected={selected}
-              setSelected={setSelected}
-              setErrors={setErrors}
+              cards={selected}
+              setCards={setSelected}
+              className={clsx(errors.selected && classes.selectedError)}
             />
-          </React.Suspense>
+            {errors.selected && (
+              <Typography className={classes.errorText} variant="caption">
+                {errors.selected}
+              </Typography>
+            )}
+          </Grid>
+          <Grid item xs={12} md={3}>
+            {clicked && (
+              <img
+                src={`${process.env.REACT_APP_S3_HOST}${clicked}.png`}
+                alt={clicked}
+                className={classes.maxWidth}
+              />
+            )}
+            <form onSubmit={onSubmit}>
+              <TextField
+                fullWidth
+                label="Deck name"
+                variant="filled"
+                className={classes.marginBottom}
+                value={name}
+                error={!!errors.name}
+                helperText={errors.name ? errors.name : undefined}
+                onChange={(e) => {
+                  setErrors({});
+                  setName(e.target.value);
+                }}
+                disabled={!canEdit}
+              />
+              {canEdit && (
+                <Button color="primary" variant="contained" type="submit">
+                  {isEdit ? "Update Deck" : "Create Deck"}
+                </Button>
+              )}
+            </form>
+          </Grid>
         </Grid>
-        <Grid item xs={12} md={5}>
-          <Selected
-            setClicked={setClicked}
-            cards={selected}
-            setCards={setSelected}
-            className={clsx(errors.selected && classes.selectedError)}
-          />
-          {errors.selected && (
-            <Typography className={classes.errorText} variant="caption">
-              {errors.selected}
-            </Typography>
-          )}
-        </Grid>
-        <Grid item xs={12} md={3}>
-          {clicked && (
-            <img
-              src={`${process.env.REACT_APP_S3_HOST}${clicked}.png`}
-              alt={clicked}
-              className={classes.maxWidth}
-            />
-          )}
-          <form onSubmit={onSubmit}>
-            <TextField
-              fullWidth
-              label="Deck name"
-              variant="filled"
-              className={classes.marginBottom}
-              value={name}
-              error={!!errors.name}
-              helperText={errors.name ? errors.name : undefined}
-              onChange={(e) => {
-                setErrors({});
-                setName(e.target.value);
-              }}
-            />
-            <Button color="primary" variant="contained" type="submit">
-              Create Deck
-            </Button>
-          </form>
-        </Grid>
-      </Grid>
-    </Container>
+      </Container>
+    </>
   );
 }
 
@@ -182,11 +229,13 @@ function Selected({
   cards,
   setClicked,
   setCards,
+  canEdit,
   ...rest
 }: {
   cards: any;
   setClicked: (id: string) => void;
   setCards: (cards: any) => void;
+  canEdit: boolean;
   [x: string]: any;
 }) {
   const classes = useStyles();
@@ -195,7 +244,7 @@ function Selected({
   return (
     <div className={rest.className}>
       <Typography variant="h6" gutterBottom>
-        Selected
+        {canEdit ? "Selected" : "Cards in deck"}
       </Typography>
       {!allCards?.length || allCards.length === 0 ? (
         <Box textAlign="center" marginTop={2}>
@@ -224,6 +273,7 @@ function Selected({
                     InputLabelProps={{
                       shrink: true,
                     }}
+                    disabled={!canEdit}
                     value={cards[card.id].quantity}
                     onChange={(e) => {
                       const { value } = e.target;
@@ -242,17 +292,19 @@ function Selected({
                 <Grid item xs={10}>
                   <ListItemText primary={card.name} />
                 </Grid>
-                <ListItemSecondaryAction>
-                  <IconButton
-                    onClick={() => {
-                      let cardsCopy = { ...cards };
-                      delete cardsCopy[card.id];
-                      setCards(cardsCopy);
-                    }}
-                  >
-                    <DeleteIcon />
-                  </IconButton>
-                </ListItemSecondaryAction>
+                {canEdit && (
+                  <ListItemSecondaryAction>
+                    <IconButton
+                      onClick={() => {
+                        let cardsCopy = { ...cards };
+                        delete cardsCopy[card.id];
+                        setCards(cardsCopy);
+                      }}
+                    >
+                      <DeleteIcon />
+                    </IconButton>
+                  </ListItemSecondaryAction>
+                )}
               </ListItem>
               <Divider variant="middle" component="li" />
             </React.Fragment>

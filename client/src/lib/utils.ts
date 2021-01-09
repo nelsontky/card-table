@@ -2,7 +2,6 @@ import shuffle from "lodash/shuffle";
 import { v4 as uuidv4 } from "uuid";
 
 import { Card } from "../interfaces";
-import decks from "../decks.json";
 
 export function removeFromArray(pred: (element: any) => boolean, arr: any[]) {
   let copy = [...arr];
@@ -12,7 +11,6 @@ export function removeFromArray(pred: (element: any) => boolean, arr: any[]) {
 }
 
 export function createDeck({
-  deckName,
   deckCards,
   noShuffle,
   ownerId,
@@ -22,10 +20,7 @@ export function createDeck({
   noShuffle?: boolean;
   ownerId: number;
 }) {
-  const allDecks: any = decks;
-  const cardsToAdd = deckName
-    ? allDecks[deckName]
-    : deckCards
+  const cardsToAdd = deckCards
     ? deckCards.map((card: any) => ({ ...card, ...card.card }))
     : [];
   const deck = cardsToAdd.reduce((acc: any, curr: any) => {

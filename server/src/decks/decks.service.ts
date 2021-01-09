@@ -1,7 +1,6 @@
 import { Injectable, HttpException, HttpStatus } from "@nestjs/common";
 import { CreateDeckDto } from "./dto/create-deck.dto";
 import { CreateDeckByNameDto } from "./dto/create-deck-by-name.dto";
-import { UpdateDeckDto } from "./dto/update-deck.dto";
 import { Deck } from "./entities/deck.entity";
 import { DeckCardQuantity } from "./entities/deck-card-quantity.entity";
 import { Card } from "../cards/entities/card.entity";
@@ -151,6 +150,7 @@ export class DecksService {
       .getMany();
   }
 
+  // TODO only owner can access unshared deck
   async findOne(id: string) {
     return await this.decksRepository
       .createQueryBuilder("deck")
@@ -170,8 +170,58 @@ export class DecksService {
       .getOne();
   }
 
-  update(id: number, updateDeckDto: UpdateDeckDto) {
-    return `This action updates a #${id} deck`;
+  async update(id: string, createDeckDto: CreateDeckDto, user: string) {
+    const queryRunner = this.connection.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+    try {
+      const deck = await queryRunner.manager.findOne(Deck, {
+        id,
+      });
+      await queryRunner.manager.update(
+        Deck,
+        { id },
+        { name: createDeckDto.name },
+      );
+      await queryRunner.manager.delete(DeckCardQuantity, { deck });
+
+      const newDeckCardQuantitiesPromise = createDeckDto.cards.map(
+        async (card) =>
+          queryRunner.manager.create(DeckCardQuantity, {
+            card: await this.cardsRepository.findOne(card.id),
+            quantity: card.quantity,
+            deck: deck,
+          }),
+      );
+      const newDeckCardQuantities = await Promise.all(
+        newDeckCardQuantitiesPromise,
+      );
+      await queryRunner.manager.save(newDeckCardQuantities);
+
+      await queryRunner.commitTransaction();
+      return deck;
+    } catch (err) {
+      // since we have errors lets rollback the changes we made
+      await queryRunner.rollbackTransaction();
+      console.log(err);
+
+      if (err instanceof QueryFailedError) {
+        throw new HttpException(
+          {
+            name: "You already have a deck with this name",
+          },
+          HttpStatus.CONFLICT,
+        );
+      }
+    } finally {
+      // you need to release a queryRunner which was manually instantiated
+      await queryRunner.release();
+    }
+
+    throw new HttpException(
+      "Internal server error",
+      HttpStatus.INTERNAL_SERVER_ERROR,
+    );
   }
 
   async remove(id: string, user: string) {

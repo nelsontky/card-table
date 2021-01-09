@@ -128,7 +128,12 @@ function ListDecks({ endpoint }: { endpoint: string }) {
         cols={decks.length < 3 ? decks.length : isMedium ? 3 : isSmall ? 2 : 1}
       >
         {decks.map((deck: any) => (
-          <GridListTile key={deck.id} className={classes.tile}>
+          <GridListTile
+            component={Link}
+            to={`/decks/${deck.id}`}
+            key={deck.id}
+            className={classes.tile}
+          >
             <img
               src={
                 process.env.REACT_APP_S3_HOST +
