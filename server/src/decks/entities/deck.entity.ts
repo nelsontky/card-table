@@ -6,11 +6,13 @@ import {
   UpdateDateColumn,
   Index,
   OneToMany,
+  Unique,
 } from "typeorm";
 
 import { DeckCardQuantity } from "./deck-card-quantity.entity";
 
 @Entity()
+@Unique(["createdBy", "name"])
 export class Deck {
   @PrimaryGeneratedColumn("uuid")
   id: string;
@@ -22,7 +24,6 @@ export class Deck {
   @OneToMany(
     () => DeckCardQuantity,
     (deckCardQuantity) => deckCardQuantity.deck,
-    { onDelete: "CASCADE" },
   )
   cardQuantities: DeckCardQuantity[];
 

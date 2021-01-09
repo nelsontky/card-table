@@ -5,7 +5,7 @@ import { UpdateDeckDto } from "./dto/update-deck.dto";
 import { Deck } from "./entities/deck.entity";
 import { DeckCardQuantity } from "./entities/deck-card-quantity.entity";
 import { Card } from "../cards/entities/card.entity";
-import { Connection, Repository } from "typeorm";
+import { Connection, Repository, QueryFailedError } from "typeorm";
 import { InjectRepository } from "@nestjs/typeorm";
 
 @Injectable()
@@ -20,16 +20,22 @@ export class DecksService {
     private cardsRepository: Repository<Card>,
   ) {}
 
-  async create(createDeckDto: CreateDeckDto) {
+  async create(createDeckDto: CreateDeckDto, user: string) {
     const queryRunner = this.connection.createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction();
     try {
+      const newDeck = queryRunner.manager.create(Deck, {
+        name: createDeckDto.name,
+        createdBy: user,
+      });
+      await queryRunner.manager.save(newDeck);
       const newDeckCardQuantitiesPromise = createDeckDto.cards.map(
         async (card) =>
           queryRunner.manager.create(DeckCardQuantity, {
             card: await this.cardsRepository.findOne(card.id),
             quantity: card.quantity,
+            deck: newDeck,
           }),
       );
       const newDeckCardQuantities = await Promise.all(
@@ -37,18 +43,20 @@ export class DecksService {
       );
       await queryRunner.manager.save(newDeckCardQuantities);
 
-      const newDeck = queryRunner.manager.create(Deck, {
-        name: createDeckDto.name,
-        createdBy: createDeckDto.createdBy,
-        cardQuantities: newDeckCardQuantities,
-      });
-      await queryRunner.manager.save(newDeck);
-
       await queryRunner.commitTransaction();
       return newDeck;
     } catch (err) {
       // since we have errors lets rollback the changes we made
       await queryRunner.rollbackTransaction();
+
+      if (err instanceof QueryFailedError) {
+        throw new HttpException(
+          {
+            name: "You already have a deck with this name",
+          },
+          HttpStatus.CONFLICT,
+        );
+      }
     } finally {
       // you need to release a queryRunner which was manually instantiated
       await queryRunner.release();
@@ -156,7 +164,15 @@ export class DecksService {
     return `This action updates a #${id} deck`;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} deck`;
+  async remove(id: string, user: string) {
+    const deckToRemove = await this.decksRepository.findOne({ id });
+    if (!deckToRemove) {
+      throw new HttpException("Not Found", HttpStatus.NOT_FOUND);
+    }
+    if (deckToRemove.createdBy !== user) {
+      throw new HttpException("Forbidden", HttpStatus.FORBIDDEN);
+    }
+
+    await this.decksRepository.delete({ id });
   }
 }

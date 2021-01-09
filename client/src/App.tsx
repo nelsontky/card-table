@@ -8,7 +8,7 @@ import axios from "axios";
 import Home from "./pages/Home";
 import Game from "./pages/Game";
 import { login } from "./slices/userSlice";
-import Create from "./pages/decks/Create";
+import ManageDecks from "./pages/decks/ManageDecks";
 
 function App() {
   const dispatch = useDispatch();
@@ -36,7 +36,7 @@ function App() {
       <CssBaseline />
       <Switch>
         <Route path="/decks/create">
-          <Create />
+          <ManageDecks />
         </Route>
         <Route path="/:id">
           <Game />

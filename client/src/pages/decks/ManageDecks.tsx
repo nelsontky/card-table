@@ -21,6 +21,8 @@ import { FixedSizeList, ListChildComponentProps } from "react-window";
 import AutoSizer from "react-virtualized-auto-sizer";
 import { Search as SearchIcon, Delete as DeleteIcon } from "@material-ui/icons";
 import useSWR from "swr";
+import clsx from "clsx";
+import axios from "axios";
 
 import { useUser } from "../../lib/hooks";
 
@@ -58,15 +60,52 @@ const useStyles = makeStyles((theme: Theme) =>
     marginBottom: {
       marginBottom: theme.spacing(1),
     },
+    selectedError: {
+      borderStyle: "solid",
+      borderColor: theme.palette.error.main,
+    },
+    errorText: {
+      color: theme.palette.error.main,
+    },
   })
 );
 
-export default function Create() {
+export default function ManageDecks() {
   const classes = useStyles();
 
   const [search, setSearch] = React.useState("");
   const [selected, setSelected] = React.useState<{ [id: string]: any }>({});
+  const [name, setName] = React.useState("");
   const [clicked, setClicked] = React.useState<string | null>(null);
+  const [errors, setErrors] = React.useState<{ [x: string]: string }>({});
+
+  const onSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const isEmpty = Object.keys(selected).length === 0;
+    const hasName = name.trim().length > 0;
+
+    let newErrors: any = {};
+    if (isEmpty) {
+      newErrors.selected =
+        "Please select at least one card to add to your deck!";
+    }
+    if (!hasName) {
+      newErrors.name = "Please input a deck name";
+    }
+    setErrors(newErrors);
+
+    if (Object.keys(newErrors).length > 0) {
+      return;
+    }
+
+    const cards: any = Object.keys(selected).map((id) => ({
+      id,
+      quantity: selected[id].quantity,
+    }));
+    try {
+      await axios.post("/decks", { name, cards });
+    } catch (err) {}
+  };
 
   return (
     <Container fixed className={classes.root}>
@@ -85,6 +124,7 @@ export default function Create() {
               query={search}
               selected={selected}
               setSelected={setSelected}
+              setErrors={setErrors}
             />
           </React.Suspense>
         </Grid>
@@ -93,7 +133,13 @@ export default function Create() {
             setClicked={setClicked}
             cards={selected}
             setCards={setSelected}
+            className={clsx(errors.selected && classes.selectedError)}
           />
+          {errors.selected && (
+            <Typography className={classes.errorText} variant="caption">
+              {errors.selected}
+            </Typography>
+          )}
         </Grid>
         <Grid item xs={12} md={3}>
           {clicked && (
@@ -103,14 +149,21 @@ export default function Create() {
               className={classes.maxWidth}
             />
           )}
-          <form>
+          <form onSubmit={onSubmit}>
             <TextField
               fullWidth
               label="Deck name"
               variant="filled"
               className={classes.marginBottom}
+              value={name}
+              error={!!errors.name}
+              helperText={errors.name ? errors.name : undefined}
+              onChange={(e) => {
+                setErrors({});
+                setName(e.target.value);
+              }}
             />
-            <Button color="primary" variant="contained">
+            <Button color="primary" variant="contained" type="submit">
               Create Deck
             </Button>
           </form>
@@ -124,16 +177,18 @@ function Selected({
   cards,
   setClicked,
   setCards,
+  ...rest
 }: {
   cards: any;
   setClicked: (id: string) => void;
   setCards: (cards: any) => void;
+  [x: string]: any;
 }) {
   const classes = useStyles();
   const allCards = Object.keys(cards).map((id) => ({ id, ...cards[id] }));
 
   return (
-    <>
+    <div className={rest.className}>
       <Typography variant="h6" gutterBottom>
         Selected
       </Typography>
@@ -199,7 +254,7 @@ function Selected({
           ))}
         </List>
       )}
-    </>
+    </div>
   );
 }
 
@@ -232,7 +287,7 @@ function SearchBar({ onSearch }: { onSearch: (query: string) => void }) {
 
 function renderRow(props: ListChildComponentProps) {
   const { index, style, data } = props;
-  const { results, setSelected, setClicked } = data;
+  const { results, setSelected, setClicked, setErrors } = data;
   const card = results[index];
 
   return (
@@ -243,6 +298,7 @@ function renderRow(props: ListChildComponentProps) {
           ...selected,
           [card.id]: { name: card.name, quantity: 1 },
         }));
+        setErrors({});
       }}
       button
       style={style}
@@ -258,11 +314,13 @@ function SearchResults({
   selected,
   setSelected,
   setClicked,
+  setErrors,
 }: {
   query: string;
   selected: { [id: string]: any };
   setSelected: (selected: { [id: string]: any }) => void;
   setClicked: (id: string) => void;
+  setErrors: (errors: any) => void;
 }) {
   const user = useUser({ redirectTo: "/" });
   const { data } = useSWR(user ? `/cards/search?query=${query}` : null);
@@ -285,7 +343,12 @@ function SearchResults({
           itemSize={48}
           itemCount={selectedRemoved.length}
           width={width}
-          itemData={{ results: selectedRemoved, setSelected, setClicked }}
+          itemData={{
+            results: selectedRemoved,
+            setSelected,
+            setClicked,
+            setErrors,
+          }}
         >
           {renderRow}
         </FixedSizeList>

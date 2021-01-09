@@ -14,7 +14,7 @@ import { CreateDeckDto } from "./dto/create-deck.dto";
 import { CreateDeckByNameDto } from "./dto/create-deck-by-name.dto";
 import { UpdateDeckDto } from "./dto/update-deck.dto";
 import { AuthGuard } from "../common/guards/auth.guard";
-import { User } from "src/common/decorators/User";
+import { User } from "src/common/decorators/user.decorator";
 
 @Controller("decks")
 export class DecksController {
@@ -22,8 +22,8 @@ export class DecksController {
 
   @Post()
   @UseGuards(AuthGuard)
-  create(@Body() createDeckDto: CreateDeckDto) {
-    return this.decksService.create(createDeckDto);
+  create(@Body() createDeckDto: CreateDeckDto, @User() user: string) {
+    return this.decksService.create(createDeckDto, user);
   }
 
   @Post("/by-name")
@@ -60,7 +60,7 @@ export class DecksController {
 
   @Delete(":id")
   @UseGuards(AuthGuard)
-  remove(@Param("id") id: string) {
-    return this.decksService.remove(+id);
+  remove(@Param("id") id: string, @User() user: string) {
+    return this.decksService.remove(id, user);
   }
 }

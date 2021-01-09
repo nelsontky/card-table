@@ -8,7 +8,7 @@ export class DeckCardQuantity {
   @ManyToOne(() => Card, { primary: true })
   card: Card;
 
-  @ManyToOne(() => Deck, { primary: true })
+  @ManyToOne(() => Deck, { primary: true, onDelete: "CASCADE" })
   deck: Deck;
 
   @Column()

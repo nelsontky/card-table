@@ -6,7 +6,4 @@ export class CreateDeckDto {
 
   @IsArray()
   readonly cards: Array<{ id: string; quantity: number }>;
-
-  @IsString()
-  readonly createdBy: string;
 }
