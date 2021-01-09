@@ -1,14 +1,6 @@
 import React from "react";
-import {
-  Container,
-  Grid,
-  Typography,
-  Button,
-  Box,
-  LinearProgress,
-} from "@material-ui/core";
+import { Container, Grid, Typography, Button, Box } from "@material-ui/core";
 import { Theme, createStyles, makeStyles } from "@material-ui/core/styles";
-import { useHistory } from "react-router-dom";
 
 import LoginDialog from "../components/LoginDialog";
 import Decks from "../components/Decks";
@@ -31,9 +23,7 @@ const useStyles = makeStyles((theme: Theme) =>
 
 export default function Home() {
   const classes = useStyles();
-  const history = useHistory();
 
-  const [selected, setSelected] = React.useState(null);
   const [isLogin, setIsLogin] = React.useState(false);
 
   const user = useUser();

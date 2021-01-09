@@ -20,6 +20,7 @@ import useSWR from "swr";
 import { useHistory, Link } from "react-router-dom";
 
 import { useUser } from "../lib/hooks";
+import LinkButton from "./LinkButton";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -73,15 +74,14 @@ export default function Decks({ openLogin }: { openLogin: () => void }) {
       {!user ? (
         <Box textAlign="center">
           <Typography variant="caption">
-            <a
+            <LinkButton
               onClick={(e) => {
                 e.preventDefault();
                 openLogin();
               }}
-              href=""
             >
               Sign in/sign up
-            </a>{" "}
+            </LinkButton>{" "}
             to create your own custom decks!
           </Typography>
         </Box>
