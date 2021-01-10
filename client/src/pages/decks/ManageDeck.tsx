@@ -244,7 +244,7 @@ function ManageDeck() {
                   )}
                 </Grid>
                 <Grid item>
-                  {canEdit && (
+                  {canEdit && isEdit && (
                     <Button
                       color="secondary"
                       variant="contained"
