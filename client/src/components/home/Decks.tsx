@@ -19,8 +19,8 @@ import useMediaQuery from "@material-ui/core/useMediaQuery";
 import useSWR from "swr";
 import { useHistory, Link } from "react-router-dom";
 
-import { useUser } from "../lib/hooks";
-import LinkButton from "./LinkButton";
+import { useUser } from "../../lib/hooks";
+import LinkButton from "../LinkButton";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -46,7 +46,13 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 );
 
-export default function Decks({ openLogin }: { openLogin: () => void }) {
+export default function Decks({
+  openLogin,
+  linkTo,
+}: {
+  openLogin: () => void;
+  linkTo: (id: string) => any;
+}) {
   const user = useUser();
   const history = useHistory();
 
@@ -87,20 +93,26 @@ export default function Decks({ openLogin }: { openLogin: () => void }) {
         </Box>
       ) : (
         <React.Suspense fallback={<LinearProgress />}>
-          <ListDecks endpoint="/decks/mine" />
+          <ListDecks linkTo={linkTo} endpoint="/decks/mine" />
         </React.Suspense>
       )}
       <Typography variant="h6" gutterBottom>
         Pre-made Decks
       </Typography>
       <React.Suspense fallback={<LinearProgress />}>
-        <ListDecks endpoint="/decks" />
+        <ListDecks linkTo={linkTo} endpoint="/decks" />
       </React.Suspense>
     </>
   );
 }
 
-function ListDecks({ endpoint }: { endpoint: string }) {
+function ListDecks({
+  endpoint,
+  linkTo,
+}: {
+  endpoint: string;
+  linkTo: (id: string) => any;
+}) {
   const classes = useStyles();
 
   const { data: decks } = useSWR(endpoint);
@@ -130,7 +142,7 @@ function ListDecks({ endpoint }: { endpoint: string }) {
         {decks.map((deck: any) => (
           <GridListTile
             component={Link}
-            to={`/decks/${deck.id}`}
+            to={linkTo(deck.id)}
             key={deck.id}
             className={classes.tile}
           >

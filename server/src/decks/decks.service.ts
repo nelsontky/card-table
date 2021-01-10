@@ -177,7 +177,13 @@ export class DecksService {
     try {
       const deck = await queryRunner.manager.findOne(Deck, {
         id,
+        createdBy: user,
       });
+
+      if (!deck) {
+        throw new HttpException("Forbidden", HttpStatus.FORBIDDEN);
+      }
+
       await queryRunner.manager.update(
         Deck,
         { id },
@@ -203,7 +209,6 @@ export class DecksService {
     } catch (err) {
       // since we have errors lets rollback the changes we made
       await queryRunner.rollbackTransaction();
-      console.log(err);
 
       if (err instanceof QueryFailedError) {
         throw new HttpException(

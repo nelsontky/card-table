@@ -3,12 +3,12 @@ import { Container, Grid, Typography, Button, Box } from "@material-ui/core";
 import { Theme, createStyles, makeStyles } from "@material-ui/core/styles";
 
 import LoginDialog from "../components/LoginDialog";
-import Decks from "../components/Decks";
+import Decks from "../components/home/Decks";
 import { useUser } from "../lib/hooks";
 import { logout } from "../slices/userSlice";
 import { useAppDispatch } from "../store";
-import HomeTabs from "../components/HomeTabs";
-import StartGame from "../components/StartGame";
+import HomeTabs from "../components/home/HomeTabs";
+import StartGame from "../components/home/StartGame";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -72,13 +72,18 @@ export default function Home() {
               Decks
             </Typography>
             <Decks
+              linkTo={(id: string) => `/decks/${id}`}
               openLogin={() => {
                 setIsLogin(true);
               }}
             />
           </Box>
         ) : (
-          <StartGame />
+          <StartGame
+            openLogin={() => {
+              setIsLogin(true);
+            }}
+          />
         )}
       </Container>
     </>
