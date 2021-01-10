@@ -155,6 +155,24 @@ function ManageDeck() {
     }
   };
 
+  const onDelete = async () => {
+    try {
+      const confirm = window.confirm(
+        "Are you sure you want to delete this deck?"
+      );
+
+      if (confirm) {
+        setIsLoading(true);
+        await axios.delete(`/decks/${data.id}`);
+        history.push("/");
+      }
+    } catch (err) {
+      dispatch(alert({ message: "An error has occurred!", severity: "error" }));
+      setIsLoading(false);
+      setErrors(err.response.data);
+    }
+  };
+
   return (
     <>
       {isLoading && <LoadingBackdrop />}
@@ -217,11 +235,26 @@ function ManageDeck() {
                 }}
                 disabled={!canEdit}
               />
-              {canEdit && (
-                <Button color="primary" variant="contained" type="submit">
-                  {isEdit ? "Update Deck" : "Create Deck"}
-                </Button>
-              )}
+              <Grid container spacing={1}>
+                <Grid item>
+                  {canEdit && (
+                    <Button color="primary" variant="contained" type="submit">
+                      {isEdit ? "Update Deck" : "Create Deck"}
+                    </Button>
+                  )}
+                </Grid>
+                <Grid item>
+                  {canEdit && (
+                    <Button
+                      color="secondary"
+                      variant="contained"
+                      onClick={onDelete}
+                    >
+                      Delete Deck
+                    </Button>
+                  )}
+                </Grid>
+              </Grid>
             </form>
           </Grid>
         </Grid>
