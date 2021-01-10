@@ -23,9 +23,11 @@ import { Search as SearchIcon, Delete as DeleteIcon } from "@material-ui/icons";
 import useSWR from "swr";
 import clsx from "clsx";
 import axios from "axios";
+import { useHistory, useParams } from "react-router-dom";
 
 import { useUser } from "../../lib/hooks";
-import { useHistory, useParams } from "react-router-dom";
+import { useAppDispatch } from "../../store";
+import { alert } from "../../slices/snackbarsSlice";
 
 import LoadingBackdrop from "../../components/LoadingBackdrop";
 
@@ -113,6 +115,7 @@ function ManageDeck() {
   }, [data]);
 
   const [isLoading, setIsLoading] = React.useState(false);
+  const dispatch = useAppDispatch();
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const isEmpty = Object.keys(selected).length === 0;
@@ -129,6 +132,7 @@ function ManageDeck() {
     setErrors(newErrors);
 
     if (Object.keys(newErrors).length > 0) {
+      dispatch(alert({ message: "An error has occurred!", severity: "error" }));
       return;
     }
 
@@ -145,6 +149,7 @@ function ManageDeck() {
       }
       history.push("/");
     } catch (err) {
+      dispatch(alert({ message: "An error has occurred!", severity: "error" }));
       setIsLoading(false);
       setErrors(err.response.data);
     }
