@@ -2,6 +2,7 @@ import { configureStore } from "@reduxjs/toolkit";
 import playerIdReducer from "./slices/playerIdSlice";
 import gameReducer from "./slices/gameSlice";
 import userReducer from "./slices/userSlice";
+import snackbarsReducer from "./slices/snackbarsSlice";
 import { useDispatch } from "react-redux";
 
 const store = configureStore({
@@ -9,6 +10,7 @@ const store = configureStore({
     playerId: playerIdReducer,
     game: gameReducer,
     user: userReducer,
+    snackbars: snackbarsReducer,
   },
 });
 

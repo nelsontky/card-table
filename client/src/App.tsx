@@ -9,6 +9,7 @@ import Home from "./pages/Home";
 import Game from "./pages/Game";
 import { login } from "./slices/userSlice";
 import ManageDeck from "./pages/decks/ManageDeck";
+import Snackbars from "./components/Snackbars";
 
 function App() {
   const dispatch = useDispatch();
@@ -34,6 +35,7 @@ function App() {
   return (
     <>
       <CssBaseline />
+      <Snackbars />
       <Switch>
         <Route path="/decks/create">
           <ManageDeck />
