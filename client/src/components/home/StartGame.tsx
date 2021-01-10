@@ -10,7 +10,6 @@ import {
   DialogTitle,
 } from "@material-ui/core";
 import { Theme, createStyles, makeStyles } from "@material-ui/core/styles";
-import { useHistory } from "react-router-dom";
 
 import { Send as SendIcon } from "@material-ui/icons";
 import Decks from "./Decks";
@@ -26,7 +25,6 @@ const useStyles = makeStyles((theme: Theme) =>
 );
 
 export default function StartGame({ openLogin }: { openLogin: () => void }) {
-  const history = useHistory();
   const classes = useStyles();
   const [roomId, setRoomId] = React.useState<number | "">("");
   const [peerId, setPeerId] = React.useState<string | "">("");

@@ -30,7 +30,7 @@ export default function Snackbars() {
       // Close an active snack when a new one is added
       dispatch(setOpen(false));
     }
-  }, [snackPack, currentMessage, open]);
+  }, [snackPack, currentMessage, open, dispatch]);
 
   const handleClose = (_?: React.SyntheticEvent, reason?: string) => {
     if (reason === "clickaway") {

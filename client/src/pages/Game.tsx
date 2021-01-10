@@ -3,7 +3,7 @@ import { Theme, createStyles, makeStyles } from "@material-ui/core/styles";
 import { Grid, LinearProgress } from "@material-ui/core";
 import { useDispatch, useSelector } from "react-redux";
 import { useCardDimensions } from "../lib/hooks";
-import { useParams, useLocation } from "react-router-dom";
+import { useParams, useLocation, Prompt } from "react-router-dom";
 import qs from "qs";
 import Peer from "peerjs";
 
@@ -12,7 +12,7 @@ import HandZone from "../components/game/HandZone";
 import PlayZone from "../components/game/PlayZone";
 import { set as setPlayerId } from "../slices/playerIdSlice";
 
-import { initialize, join } from "../lib/peer";
+import { initialize, join, conn } from "../lib/peer";
 
 const useStyles = makeStyles<Theme, { height: number; heightSmall: number }>(
   (theme: Theme) =>
@@ -43,6 +43,14 @@ function Game() {
   const dispatch = useDispatch();
 
   const [opponentDeckId, setOpponentDeckId] = React.useState<string>("");
+
+  React.useEffect(() => {
+    return () => {
+      if (conn) {
+        conn.close();
+      }
+    };
+  }, []);
 
   React.useEffect(() => {
     const onConnect = () => (_: Peer, conn: Peer.DataConnection) => {
@@ -88,40 +96,43 @@ function Game() {
   }
 
   return (
-    <Grid container className={classes.root} direction="column" spacing={1}>
-      <Grid container item wrap="wrap" spacing={1}>
-        <Grid xs={9} item>
-          <HandZone
-            size="small"
-            className={classes.handZone}
-            playerId={isHost ? 1 : 0}
-          />
-        </Grid>
-        <Grid item xs={3}>
-          <React.Suspense fallback={<LinearProgress />}>
-            <DeckZone
-              deckId={opponentDeckId}
+    <>
+      <Prompt message="Are you sure you want to leave? Game will be killed upon leaving!" />
+      <Grid container className={classes.root} direction="column" spacing={1}>
+        <Grid container item wrap="wrap" spacing={1}>
+          <Grid xs={9} item>
+            <HandZone
               size="small"
               className={classes.handZone}
               playerId={isHost ? 1 : 0}
             />
-          </React.Suspense>
+          </Grid>
+          <Grid item xs={3}>
+            <React.Suspense fallback={<LinearProgress />}>
+              <DeckZone
+                deckId={opponentDeckId}
+                size="small"
+                className={classes.handZone}
+                playerId={isHost ? 1 : 0}
+              />
+            </React.Suspense>
+          </Grid>
+        </Grid>
+        <Grid className={classes.playZone} item>
+          <PlayZone playerId={playerId} className={classes.playZone} />
+        </Grid>
+        <Grid container item wrap="wrap" spacing={1}>
+          <Grid xs={9} item>
+            <HandZone className={classes.handZone} playerId={isHost ? 0 : 1} />
+          </Grid>
+          <Grid item xs={3}>
+            <React.Suspense fallback={<LinearProgress />}>
+              <DeckZone deckId={deckId} playerId={isHost ? 0 : 1} />
+            </React.Suspense>
+          </Grid>
         </Grid>
       </Grid>
-      <Grid className={classes.playZone} item>
-        <PlayZone playerId={playerId} className={classes.playZone} />
-      </Grid>
-      <Grid container item wrap="wrap" spacing={1}>
-        <Grid xs={9} item>
-          <HandZone className={classes.handZone} playerId={isHost ? 0 : 1} />
-        </Grid>
-        <Grid item xs={3}>
-          <React.Suspense fallback={<LinearProgress />}>
-            <DeckZone deckId={deckId} playerId={isHost ? 0 : 1} />
-          </React.Suspense>
-        </Grid>
-      </Grid>
-    </Grid>
+    </>
   );
 }
 

@@ -135,6 +135,10 @@ export function join({
 
   conn.on("close", () => {
     console.log("Connection closed");
+    conn = null;
+
+    // TODO disconnect nicely
+    window.location.href = "/";
   });
 }
 
@@ -162,6 +166,9 @@ function hostReady({
     conn.on("close", function () {
       console.log("Connection closed");
       conn = null;
+
+      // TODO disconnect nicely
+      window.location.href = "/";
     });
   }
 }
