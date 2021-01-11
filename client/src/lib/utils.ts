@@ -10,6 +10,12 @@ export function removeFromArray(pred: (element: any) => boolean, arr: any[]) {
   return copy;
 }
 
+export function getFileUrl(filename: string) {
+  return process.env.NODE_ENV === "development"
+    ? "https://cards.s3.fr-par.scw.cloud/" + filename
+    : "/assets/" + filename;
+}
+
 export function createDeck({
   deckCards,
   noShuffle,

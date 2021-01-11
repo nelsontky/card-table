@@ -117,7 +117,7 @@ export function join({
     conn.close();
   }
 
-  conn = peer.connect(roomId);
+  conn = peer.connect(roomId, { serialization: "json" });
   conn.on("open", () => {
     if (onConnect && conn) {
       onConnect()(peer, conn);
