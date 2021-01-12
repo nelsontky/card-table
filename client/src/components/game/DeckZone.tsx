@@ -1,5 +1,5 @@
 import React from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { Theme, createStyles, makeStyles } from "@material-ui/core/styles";
 import { Button, Grid } from "@material-ui/core";
 import shuffle from "lodash/shuffle";
@@ -10,9 +10,11 @@ import useSwr from "swr";
 import { Card, CrudGame, Monitor } from "../../interfaces";
 import CardComponent from "./CardComponent";
 import { set, remove, add } from "../../slices/gameSlice";
+import { alert } from "../../slices/snackbarsSlice";
 import { createDeck } from "../../lib/utils";
 import BrowseDeck from "./BrowseDeck";
 import { conn } from "../../lib/peer";
+import { useAppDispatch } from "../../store";
 
 const buttons = ["Shuffle", "Browse"];
 
@@ -37,7 +39,7 @@ export default function DeckZone({
   deckId?: string;
   [x: string]: any;
 }) {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const deck: Card[] = useSelector((state: any) => state.game[playerId].deck);
 
   const myPlayerId = useSelector((state: any) => state.playerId);
@@ -49,6 +51,7 @@ export default function DeckZone({
     switch (button) {
       case "Shuffle":
         dispatch(set({ playerId, section: "deck", cards: shuffle(deck) }));
+        dispatch(alert({ message: "Deck shuffled!", severity: "success" }));
         break;
       case "Browse":
         setIsBrowseDeck(true);

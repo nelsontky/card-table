@@ -28,6 +28,7 @@ import { useHistory, useParams } from "react-router-dom";
 import { useUser } from "../../lib/hooks";
 import { useAppDispatch } from "../../store";
 import { alert } from "../../slices/snackbarsSlice";
+import { getFileUrl } from "../../lib/utils";
 
 import LoadingBackdrop from "../../components/LoadingBackdrop";
 
@@ -215,7 +216,7 @@ function ManageDeck() {
           <Grid item xs={12} md={3}>
             {clicked && (
               <img
-                src={`${process.env.REACT_APP_S3_HOST}${clicked}.png`}
+                src={getFileUrl(`${clicked}.png`)}
                 alt={clicked}
                 className={classes.maxWidth}
               />

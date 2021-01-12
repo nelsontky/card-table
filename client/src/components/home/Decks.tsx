@@ -21,6 +21,7 @@ import { useHistory, Link } from "react-router-dom";
 
 import { useUser } from "../../lib/hooks";
 import LinkButton from "../LinkButton";
+import { getFileUrl } from "../../lib/utils";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -147,11 +148,7 @@ function ListDecks({
             className={classes.tile}
           >
             <img
-              src={
-                process.env.REACT_APP_S3_HOST +
-                deck.cardQuantities[0].card.id +
-                ".png"
-              }
+              src={getFileUrl(deck.cardQuantities[0].card.id + ".png")}
               alt={deck.name}
               className={classes.image}
             />
