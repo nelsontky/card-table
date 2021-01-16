@@ -20,5 +20,11 @@ services:
     ports:
       - 9000:9000
 
+  coturn:
+    image: instrumentisto/coturn
+    network_mode: "host"
+    volumes:
+      - ./turnserver.conf:/etc/coturn/turnserver.conf
+
 volumes:
   postgres-card-table:
